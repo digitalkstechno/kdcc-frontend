@@ -14,9 +14,10 @@ export default function QRPage() {
   const [cardUrl, setCardUrl] = useState("");
 
   useEffect(() => {
-    if (user?._id) {
+    if (user?.serialNumber && user?.name) {
       const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || window.location.origin;
-      setCardUrl(`${baseUrl}/card/${user._id}`);
+      const slug = user.name.toLowerCase().replace(/\s+/g, '-');
+      setCardUrl(`${baseUrl}/${user.serialNumber}/${slug}`);
     }
   }, [user]);
 

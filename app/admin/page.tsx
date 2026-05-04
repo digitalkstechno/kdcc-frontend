@@ -195,6 +195,13 @@ export default function AdminPage() {
       render: (row: any) => (
         <div className="flex items-center gap-1">
           <button
+            onClick={() => router.push(`/${row.serialNumber}/${row.name?.toLowerCase().replace(/\s+/g, '-')}`)}
+            className="p-1.5 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded transition-colors"
+            title="View Card"
+          >
+            <Eye size={15} />
+          </button>
+          <button
             onClick={() => handleEditUser(row)}
             className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
           >

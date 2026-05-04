@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
-import { Camera, Phone, MapPin, Clock, Globe, User, Pencil, Check, X, Loader2, Mail } from "lucide-react";
+import { Camera, Phone, MapPin, Clock, Globe, User, Pencil, Check, X, Loader2, Heart, CreditCard } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/lib/redux/store";
 import { fetchProfile, updateProfile } from "@/lib/redux/slices/authSlice";
@@ -15,23 +15,22 @@ export default function ProfilePage() {
   const [localProfile, setLocalProfile] = useState({
     name: "",
     number: "",
+    whatsappNumber: "",
     location: "",
+    homeAddress: "",
     timing: "",
     website: "",
+    designation: "",
+    bloodGroup: "",
+    aadharNumber: "",
     profileImage: "",
-    logo: "",
   });
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [selectedLogo, setSelectedLogo] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
-  const [logoPreviewUrl, setLogoPreviewUrl] = useState<string>("");
-  
   const [editingField, setEditingField] = useState<string | null>(null);
   const [tempValue, setTempValue] = useState<string>("");
-  
   const fileRef = useRef<HTMLInputElement>(null);
-  const logoRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     dispatch(fetchProfile());
@@ -42,11 +41,15 @@ export default function ProfilePage() {
       setLocalProfile({
         name: user.name || "",
         number: user.number || "",
+        whatsappNumber: user.whatsappNumber || "",
         location: user.location || "",
+        homeAddress: user.homeAddress || "",
         timing: user.timing || "",
         website: user.website || "",
+        designation: user.designation || "",
+        bloodGroup: user.bloodGroup || "",
+        aadharNumber: user.aadharNumber || "",
         profileImage: user.profileImage || "",
-        logo: user.logo || "",
       });
     }
   }, [user]);
@@ -63,9 +66,7 @@ export default function ProfilePage() {
     }
   };
 
-  const cancelEdit = () => {
-    setEditingField(null);
-  };
+  const cancelEdit = () => setEditingField(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -75,32 +76,30 @@ export default function ProfilePage() {
     }
   };
 
-  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedLogo(file);
-      setLogoPreviewUrl(URL.createObjectURL(file));
-    }
-  };
-
   const handleSaveProfile = async () => {
     const formData = new FormData();
-    formData.append("name", localProfile.name);
-    formData.append("number", localProfile.number);
-    formData.append("location", localProfile.location);
-    formData.append("timing", localProfile.timing);
-    formData.append("website", localProfile.website);
-
+    const textFields: Record<string, string> = {
+      name: localProfile.name,
+      number: localProfile.number,
+      whatsappNumber: localProfile.whatsappNumber,
+      location: localProfile.location,
+      designation: localProfile.designation,
+      homeAddress: localProfile.homeAddress,
+      timing: localProfile.timing,
+      website: localProfile.website,
+      bloodGroup: localProfile.bloodGroup,
+      aadharNumber: localProfile.aadharNumber,
+    };
+    Object.entries(textFields).forEach(([key, val]) => {
+      formData.append(key, val);
+    });
     if (selectedFile) formData.append("profileImage", selectedFile);
-    if (selectedLogo) formData.append("logo", selectedLogo);
 
     try {
       await dispatch(updateProfile(formData)).unwrap();
       toast.success("Profile updated successfully");
       setSelectedFile(null);
-      setSelectedLogo(null);
       setPreviewUrl("");
-      setLogoPreviewUrl("");
     } catch (err: any) {
       toast.error(err || "Failed to update profile");
     }
@@ -108,10 +107,15 @@ export default function ProfilePage() {
 
   const fields = [
     { key: "name", label: "Full Name", icon: User, placeholder: "Enter full name" },
+    { key: "designation", label: "Designation", icon: User, placeholder: "e.g. Senior Officer, Manager" },
     { key: "number", label: "Phone Number", icon: Phone, placeholder: "Enter phone number" },
+    { key: "whatsappNumber", label: "WhatsApp Number", icon: Phone, placeholder: "Enter WhatsApp number" },
     { key: "location", label: "Address", icon: MapPin, placeholder: "Enter address" },
+    { key: "homeAddress", label: "Home Address", icon: MapPin, placeholder: "Enter home address" },
     { key: "timing", label: "Timing", icon: Clock, placeholder: "e.g. Mon-Sat: 9AM - 6PM" },
     { key: "website", label: "Website", icon: Globe, placeholder: "Enter website URL" },
+    { key: "bloodGroup", label: "Blood Group", icon: Heart, placeholder: "e.g. A+, B+, O+" },
+    { key: "aadharNumber", label: "Aadhar Number", icon: CreditCard, placeholder: "Enter 12-digit Aadhar number" },
   ];
 
   const getImageUrl = () => {
@@ -120,16 +124,6 @@ export default function ProfilePage() {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/v1/api";
       const baseUrl = apiUrl.split("/v1/api")[0];
       return `${baseUrl}/builder/${localProfile.profileImage}`;
-    }
-    return "";
-  };
-
-  const getLogoUrl = () => {
-    if (logoPreviewUrl) return logoPreviewUrl;
-    if (localProfile.logo) {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/v1/api";
-      const baseUrl = apiUrl.split("/v1/api")[0];
-      return `${baseUrl}/builder/${localProfile.logo}`;
     }
     return "";
   };
@@ -148,36 +142,26 @@ export default function ProfilePage() {
     <DashboardLayout type="user">
       <div className="mx-auto space-y-6">
         <div className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm">
-           <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-6">Profile Settings</p>
-           <div className="grid grid-cols-2 gap-6 mb-8">
-            <div className="flex flex-col items-center">
-              <p className="text-[10px] font-bold text-gray-400 uppercase mb-2">Profile Image</p>
-              <div className="relative">
-                <div className="h-28 w-28 bg-gray-50 border border-gray-200 rounded-3xl overflow-hidden flex items-center justify-center shadow-inner">
-                  {getImageUrl() ? (
-                    <img src={getImageUrl()} alt="Profile" className="h-full w-full object-cover" />
-                  ) : (
-                    <User size={36} className="text-gray-300" />
-                  )}
-                </div>
-                <button onClick={() => fileRef.current?.click()} className="absolute -bottom-2 -right-2 h-9 w-9 bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 transition-colors rounded-full border-2 border-white shadow-lg"><Camera size={16} /></button>
-                <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
-              </div>
-            </div>
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-6">Profile Settings</p>
 
-            <div className="flex flex-col items-center">
-              <p className="text-[10px] font-bold text-gray-400 uppercase mb-2">Company Logo</p>
-              <div className="relative">
-                <div className="h-28 w-28 bg-gray-50 border border-gray-200 rounded-3xl overflow-hidden flex items-center justify-center shadow-inner">
-                  {getLogoUrl() ? (
-                    <img src={getLogoUrl()} alt="Logo" className="h-full w-full object-contain p-2" />
-                  ) : (
-                    <Globe size={36} className="text-gray-300" />
-                  )}
-                </div>
-                <button onClick={() => logoRef.current?.click()} className="absolute -bottom-2 -right-2 h-9 w-9 bg-purple-600 text-white flex items-center justify-center hover:bg-purple-700 transition-colors rounded-full border-2 border-white shadow-lg"><Camera size={16} /></button>
-                <input ref={logoRef} type="file" accept="image/*" className="hidden" onChange={handleLogoChange} />
+          {/* Profile Image */}
+          <div className="flex flex-col items-center mb-8">
+            <p className="text-[10px] font-bold text-gray-400 uppercase mb-2">Profile Image</p>
+            <div className="relative">
+              <div className="h-28 w-28 bg-gray-50 border border-gray-200 rounded-3xl overflow-hidden flex items-center justify-center shadow-inner">
+                {getImageUrl() ? (
+                  <img src={getImageUrl()} alt="Profile" className="h-full w-full object-cover" />
+                ) : (
+                  <User size={36} className="text-gray-300" />
+                )}
               </div>
+              <button
+                onClick={() => fileRef.current?.click()}
+                className="absolute -bottom-2 -right-2 h-9 w-9 bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 transition-colors rounded-full border-2 border-white shadow-lg"
+              >
+                <Camera size={16} />
+              </button>
+              <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
             </div>
           </div>
 
@@ -207,7 +191,6 @@ export default function ProfilePage() {
                     )}
                   </div>
                 </div>
-
                 <div className="flex items-center gap-1 shrink-0 pt-1">
                   {editingField === key ? (
                     <>
@@ -244,4 +227,3 @@ export default function ProfilePage() {
     </DashboardLayout>
   );
 }
-

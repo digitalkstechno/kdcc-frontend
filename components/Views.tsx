@@ -317,6 +317,7 @@ export const HomeView = ({ setView, startFromHome, setStartFromHome, builderData
   const number = builderData?.number?.trim() ? builderData.number.trim() : "-";
   const email = builderData?.email?.trim() ? builderData.email.trim() : "-";
   const location = builderData?.location?.trim() ? builderData.location.trim() : "-";
+  const homeAddress = builderData?.homeAddress?.trim() ? builderData.homeAddress.trim() : "-";
   const timing = builderData?.timing?.trim() ? builderData.timing.trim() : "-";
   const website = builderData?.website?.trim() ? builderData.website.trim() : "-";
   const companyName = builderData?.companyName?.trim() ? builderData.companyName.trim() : "-";
@@ -365,6 +366,7 @@ export const HomeView = ({ setView, startFromHome, setStartFromHome, builderData
 
       <div className="w-full space-y-2">
         <ContactItem icon={User} text={name} isName />
+        <ContactItem icon={Mail} text={email} />
         <ContactItem icon={Phone} text={number} />
         <div className="bg-white rounded-2xl flex items-stretch shadow-sm border border-gray-200 overflow-hidden h-16 sm:h-20 w-full">
           <div className="w-10 sm:w-12 flex items-center justify-center text-gray-700 flex-shrink-0">
@@ -377,8 +379,18 @@ export const HomeView = ({ setView, startFromHome, setStartFromHome, builderData
             </span>
           </div>
         </div>
-        <ContactItem icon={Clock} text={timing} />
-        <ContactItem icon={Send} text={website} />
+        <div className="bg-white rounded-2xl flex items-stretch shadow-sm border border-gray-200 overflow-hidden min-h-[60px] w-full">
+          <div className="w-10 sm:w-12 flex items-center justify-center text-gray-700 flex-shrink-0">
+            <MapPin size={18} strokeWidth={2.5} />
+          </div>
+          <div className="w-[1.5px] bg-gray-200 mt-2" />
+          <div className="flex-1 flex flex-col justify-center px-4 py-2">
+            <span className="text-[10px] font-bold text-gray-400 uppercase mb-1">Home</span>
+            <span className="font-bold text-gray-800 text-[11px] sm:text-xs leading-snug tracking-tight">
+              {homeAddress}
+            </span>
+          </div>
+        </div>
       </div>
 
 <div className='w-full'>

@@ -61,7 +61,7 @@ export default function DashboardLayout({ children, type, title }: DashboardLayo
   if (!isAuthorized) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="h-10 w-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        <div className="h-10 w-10 border-4 border-t-transparent rounded-full animate-spin" style={{ borderColor: '#C56B36', borderTopColor: 'transparent' }} />
       </div>
     );
   }
@@ -103,14 +103,11 @@ export default function DashboardLayout({ children, type, title }: DashboardLayo
             >
               <Menu className="h-6 w-6" />
             </button>
-            <div className={cn(
-              "h-8 w-8 rounded-lg flex items-center justify-center text-white font-bold text-xs",
-              type === 'admin' ? "bg-black" : "bg-blue-600 shadow-md shadow-blue-100"
-            )}>
+            <div className="h-8 w-8 rounded-lg flex items-center justify-center text-white font-bold text-xs shadow-md" style={{ backgroundColor: '#C56B36' }}>
               <UserIcon size={16} />
             </div>
             <span className="text-xl font-black text-gray-900 tracking-tight hidden sm:block uppercase">
-              {type === 'admin' ? 'Admin' : 'User'} <span className={type === 'admin' ? "text-gray-400" : "text-blue-600"}>Panel</span>
+              {type === 'admin' ? 'Admin' : 'User'} <span style={{ color: '#C56B36' }}>Panel</span>
             </span>
           </div>
           <div className="flex items-center gap-2">
