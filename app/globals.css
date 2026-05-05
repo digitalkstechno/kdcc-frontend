@@ -19,6 +19,25 @@
 }
 
 @layer utilities {
+  /* Brand color #C56B36 utility classes */
+  .bg-brand { background-color: #C56B36; }
+  .bg-brand-light { background-color: #C56B3615; }
+  .text-brand { color: #C56B36; }
+  .border-brand { border-color: #C56B36; }
+  .ring-brand { --tw-ring-color: #C56B36; }
+  .hover\:bg-brand:hover { background-color: #b05e2e; }
+  .hover\:text-brand:hover { color: #C56B36; }
+  .hover\:bg-brand-light:hover { background-color: #C56B3615; }
+  .focus\:border-brand:focus { border-color: #C56B36; }
+  .btn-brand {
+    background-color: #C56B36;
+    color: white;
+    transition: opacity 0.2s;
+  }
+  .btn-brand:hover { background-color: #b05e2e; }
+  .btn-brand:disabled { opacity: 0.5; }
+  .input-brand:focus { border-color: #C56B36; outline: none; }
+
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }

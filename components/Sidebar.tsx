@@ -72,12 +72,12 @@ export default function Sidebar({ type }: SidebarProps) {
   return (
     <div className="flex h-screen flex-col border-r w-64 fixed left-0 top-0 z-40 bg-white border-gray-200">
       <div className="flex h-16 items-center px-5 border-b border-gray-200">
-        <div className="h-8 w-8 flex items-center justify-center text-white mr-3" style={{ backgroundColor: '#C56B36' }}>
+        <div className="h-8 w-8 flex items-center justify-center text-white mr-3 bg-brand">
           {type === 'admin' ? <ShieldCheck size={16} className="text-white" /> : <User size={16} />}
         </div>
         <span className="text-base font-bold uppercase tracking-tight text-gray-900">
           {type === 'admin' ? 'Admin' : 'User'}{" "}
-          <span style={{ color: '#C56B36' }}>Panel</span>
+          <span className="text-brand">Panel</span>
         </span>
       </div>
 
@@ -132,7 +132,7 @@ export default function Sidebar({ type }: SidebarProps) {
                   isActive ? "text-[#C56B36]" : "text-gray-400"
                 )} />
                 <span className="flex-1 text-left">{link.label}</span>
-                {isActive && <div className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: '#C56B36' }} />}
+                {isActive && <div className="h-1.5 w-1.5 rounded-full bg-brand" />}
               </>
             );
 

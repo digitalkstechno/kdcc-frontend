@@ -1,7 +1,7 @@
 "use client";
 
 import DashboardLayout from "@/components/DashboardLayout";
-import { Plus, CreditCard, BarChart3, Users, Clock4, Eye, EyeOff, UserPlus, Pencil, Trash2, X, Check } from "lucide-react";
+import { Plus, CreditCard, BarChart3, Users, Clock4, Eye, EyeOff, UserPlus, Pencil, Trash2, X, Check, Download } from "lucide-react";
 import { FormEvent, useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,6 +10,7 @@ import { RootState, AppDispatch } from "@/lib/redux/store";
 import CommonTable from "@/components/CommonTable";
 import { toast } from "sonner";
 import api from "@/lib/axios";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 const inputCls = "w-full border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-gray-800 focus:border-gray-800 transition-all rounded-md";
 const labelCls = "text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1";
@@ -27,6 +28,49 @@ export default function AdminPage() {
   const [visiblePasswords, setVisiblePasswords] = useState<Set<string>>(new Set());
   const [plainPasswords, setPlainPasswords] = useState<Record<string, string>>({});
   const [lastCreatedPassword, setLastCreatedPassword] = useState("");
+  const [bulkUploading, setBulkUploading] = useState(false);
+  const [bulkErrors, setBulkErrors] = useState<string[]>([]);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+
+  const handleDownloadExcel = async () => {
+    try {
+      const token = localStorage.getItem('mkgroup_admin_token');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/download-excel`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `employees_${new Date().toISOString().split('T')[0]}.xlsx`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      toast.error('Failed to download Excel');
+    }
+  };
+
+  const handleBulkUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setBulkUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await api.post('/user/bulk-upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const { created, skipped, errors } = response.data.data;
+      toast.success(`✅ Created: ${created}, Skipped: ${skipped}`);
+      if (errors && errors.length > 0) {
+        setBulkErrors(errors);
+      }
+      dispatch(fetchUsers({ page: 1, search: searchQuery }));
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Bulk upload failed');
+    } finally {
+      setBulkUploading(false);
+      e.target.value = '';
+    }
+  };
 
   const togglePasswordVisibility = (userId: string) => {
     setVisiblePasswords(prev => {
@@ -106,11 +150,11 @@ export default function AdminPage() {
   };
 
   const handleDeleteUser = async (userId: string) => {
-    if (!confirm("Are you sure you want to delete this user?")) return;
     try {
       const response = await api.delete(`/user/delete/${userId}`);
       if (response.data.status === "Success") {
         toast.success("User deleted successfully");
+        setDeleteConfirm(null);
         dispatch(fetchUsers({ page: currentPage, search: searchQuery }));
       }
     } catch (err: any) {
@@ -124,8 +168,43 @@ export default function AdminPage() {
     setShowPassword(true);
   };
 
+  // const handleDownloadExcel = () => {
+  //   const headers = ['First Timestamp', 'Employee Name', 'Designation', 'EDP Number', 'Address', 'Mobile Number', 'Blood Group', 'Aadhar Number', 'Upload Image'];
+  //   const rows = users.map((u: any) => [
+  //     u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-GB') : '',
+  //     u.name || '',
+  //     u.designation || '',
+  //     u.edpNumber || '',
+  //     u.location || '',
+  //     u.number || '',
+  //     u.bloodGroup || '',
+  //     u.aadharNumber || '',
+  //     '', // Upload Image - empty
+  //   ]);
+
+  //   const csvContent = [headers, ...rows]
+  //     .map(row => row.map((cell: any) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+  //     .join('\n');
+
+  //   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  //   const url = URL.createObjectURL(blob);
+  //   const a = document.createElement('a');
+  //   a.href = url;
+  //   a.download = `employees_${new Date().toISOString().split('T')[0]}.csv`;
+  //   a.click();
+  //   URL.revokeObjectURL(url);
+  // };
+
   const handleCreateUser = async (e: FormEvent) => {
     e.preventDefault();
+    if (!/^[0-9]{10}$/.test(formData.number)) {
+      toast.error('Mobile number must be exactly 10 digits');
+      return;
+    }
+    if (!formData.email.includes('@')) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
     const plainPwd = formData.password;
     const result = await dispatch(createUserAdmin(formData));
     if (createUserAdmin.fulfilled.match(result)) {
@@ -203,12 +282,15 @@ export default function AdminPage() {
           </button>
           <button
             onClick={() => handleEditUser(row)}
-            className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+            className="p-1.5 text-gray-400 hover:bg-orange-50 rounded transition-colors"
+            style={{ '--hover-color': '#C56B36' } as any}
+            onMouseEnter={e => (e.currentTarget.style.color = '#C56B36')}
+            onMouseLeave={e => (e.currentTarget.style.color = '')}
           >
             <Pencil size={15} />
           </button>
           <button
-            onClick={() => handleDeleteUser(row._id)}
+            onClick={() => setDeleteConfirm(row._id)}
             className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors"
           >
             <Trash2 size={15} />
@@ -221,6 +303,43 @@ export default function AdminPage() {
   return (
     <DashboardLayout type="admin">
       <div className="space-y-5">
+
+        <ConfirmDialog
+          open={!!deleteConfirm}
+          title="Delete User"
+          message="This will permanently delete the user and their card. This action cannot be undone."
+          confirmLabel="Delete"
+          onConfirm={() => deleteConfirm && handleDeleteUser(deleteConfirm)}
+          onCancel={() => setDeleteConfirm(null)}
+          variant="danger"
+        />
+
+        {/* Bulk Upload Errors Modal */}
+        {bulkErrors.length > 0 && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-black text-gray-900 uppercase tracking-tight">Upload Errors ({bulkErrors.length})</h3>
+                <button onClick={() => setBulkErrors([])} className="p-1 text-gray-400 hover:text-gray-700 rounded-lg hover:bg-gray-100"><X size={16} /></button>
+              </div>
+              <p className="text-xs text-gray-500 mb-3">The following rows had validation errors and were skipped. Fix them and re-upload.</p>
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {bulkErrors.map((err, i) => (
+                  <div key={i} className="flex items-start gap-2 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+                    <span className="text-red-500 text-xs mt-0.5">✕</span>
+                    <span className="text-xs text-red-700 font-medium">{err}</span>
+                  </div>
+                ))}
+              </div>
+              <button
+                onClick={() => setBulkErrors([])}
+                className="w-full mt-4 py-2.5 text-sm font-semibold text-white rounded-xl btn-brand"
+              >
+                OK, Got it
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Edit User Modal */}
         {editingUser && (
@@ -296,7 +415,17 @@ export default function AdminPage() {
               </div>
               <div>
                 <label className={labelCls}>Mobile Number</label>
-                <input required value={formData.number} onChange={(e) => setFormData({ ...formData, number: e.target.value })} className={inputCls} placeholder="9876543210" />
+                <input
+                  required
+                  value={formData.number}
+                  onChange={(e) => setFormData({ ...formData, number: e.target.value.replace(/\D/g, '').slice(0, 10) })}
+                  className={inputCls}
+                  placeholder="9876543210"
+                  maxLength={10}
+                />
+                {formData.number && formData.number.length !== 10 && (
+                  <p className="text-xs text-red-500 mt-1">Must be 10 digits</p>
+                )}
               </div>
               <div>
                 <label className={labelCls}>Password</label>
@@ -324,7 +453,7 @@ export default function AdminPage() {
                 <input value={formData.refer} onChange={(e) => setFormData({ ...formData, refer: e.target.value })} className={inputCls} placeholder="Optional" />
               </div>
               <div className="flex items-end">
-                <button type="submit" disabled={loading} className="w-full flex items-center justify-center gap-2 bg-gray-900 text-white px-4 py-2.5 text-sm font-semibold rounded-md hover:bg-gray-800 transition-colors disabled:opacity-60">
+                <button type="submit" disabled={loading} className="w-full flex items-center justify-center gap-2 btn-brand text-white px-4 py-2.5 text-sm font-semibold rounded-md disabled:opacity-60">
                   {loading ? <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><Plus size={15} /> Create Card</>}
                 </button>
               </div>
@@ -346,9 +475,23 @@ export default function AdminPage() {
               <h3 className="text-sm font-bold text-gray-900 uppercase tracking-tight">All Cards</h3>
               <p className="text-xs text-gray-400 mt-0.5">Manage users and their card status</p>
             </div>
-            <div className="flex items-center gap-1.5">
-              <div className="h-2 w-2 bg-emerald-500 rounded-full" />
-              <span className="text-xs text-gray-400 font-medium">Live</span>
+            <div className="flex items-center gap-3">
+              <label className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-white rounded-lg transition-colors cursor-pointer btn-brand">
+                {bulkUploading ? <div className="h-3 w-3 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Download size={13} />}
+                {bulkUploading ? 'Uploading...' : 'Bulk Upload'}
+                <input type="file" accept=".xlsx,.xls" className="hidden" onChange={handleBulkUpload} disabled={bulkUploading} />
+              </label>
+              <button
+                onClick={handleDownloadExcel}
+                className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-white rounded-lg transition-colors"
+                style={{ backgroundColor: '#5B3F86' }}
+              >
+                <Download size={13} /> Download Excel
+              </button>
+              <div className="flex items-center gap-1.5">
+                <div className="h-2 w-2 bg-emerald-500 rounded-full" />
+                <span className="text-xs text-gray-400 font-medium">Live</span>
+              </div>
             </div>
           </div>
           <div className="p-6">

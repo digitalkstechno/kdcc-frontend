@@ -103,11 +103,11 @@ export default function DashboardLayout({ children, type, title }: DashboardLayo
             >
               <Menu className="h-6 w-6" />
             </button>
-            <div className="h-8 w-8 rounded-lg flex items-center justify-center text-white font-bold text-xs shadow-md" style={{ backgroundColor: '#C56B36' }}>
+            <div className="h-8 w-8 rounded-lg flex items-center justify-center text-white font-bold text-xs bg-brand shadow-md">
               <UserIcon size={16} />
             </div>
             <span className="text-xl font-black text-gray-900 tracking-tight hidden sm:block uppercase">
-              {type === 'admin' ? 'Admin' : 'User'} <span style={{ color: '#C56B36' }}>Panel</span>
+              {type === 'admin' ? 'Admin' : 'User'} <span className="text-brand">Panel</span>
             </span>
           </div>
           <div className="flex items-center gap-2">

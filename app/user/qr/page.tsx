@@ -58,14 +58,14 @@ export default function QRPage() {
           <p className="text-sm text-gray-400 font-medium">Share your digital card with the world.</p>
         </header>
 
-        <div className="bg-white border border-gray-100 shadow-xl shadow-blue-50/50 rounded-[40px] p-8 md:p-12 flex flex-col items-center gap-10">
+        <div className="bg-white border border-gray-100 shadow-xl rounded-[40px] p-8 md:p-12 flex flex-col items-center gap-10">
           {/* QR Code Section */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="relative group"
           >
-            <div className="absolute -inset-4 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-[50px] opacity-10 blur-2xl group-hover:opacity-20 transition-opacity" />
+            <div className="absolute -inset-4 rounded-[50px] opacity-10 blur-2xl group-hover:opacity-20 transition-opacity bg-brand" />
             <div className="relative bg-white p-6 rounded-[45px] border border-gray-100 shadow-2xl flex items-center justify-center overflow-hidden">
                {cardUrl ? (
                  <img 
@@ -75,17 +75,17 @@ export default function QRPage() {
                  />
                ) : (
                  <div className="w-64 h-64 flex items-center justify-center bg-gray-50 rounded-3xl">
-                   <Loader2 className="animate-spin text-blue-600" size={30} />
+                   <Loader2 className="animate-spin" size={30} style={{ color: '#C56B36' }} />
                  </div>
                )}
                {/* Decorative corners */}
-               <div className="absolute top-0 left-0 w-12 h-12 border-t-4 border-l-4 border-blue-600 rounded-tl-[40px] m-4" />
-               <div className="absolute top-0 right-0 w-12 h-12 border-t-4 border-r-4 border-blue-600 rounded-tr-[40px] m-4" />
-               <div className="absolute bottom-0 left-0 w-12 h-12 border-b-4 border-l-4 border-blue-600 rounded-bl-[40px] m-4" />
-               <div className="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 border-blue-600 rounded-br-[40px] m-4" />
+               <div className="absolute top-0 left-0 w-12 h-12 border-t-4 border-l-4 rounded-tl-[40px] m-4 border-brand" />
+               <div className="absolute top-0 right-0 w-12 h-12 border-t-4 border-r-4 rounded-tr-[40px] m-4 border-brand" />
+               <div className="absolute bottom-0 left-0 w-12 h-12 border-b-4 border-l-4 rounded-bl-[40px] m-4 border-brand" />
+               <div className="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 rounded-br-[40px] m-4 border-brand" />
             </div>
             
-            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white p-3 rounded-2xl shadow-lg border-4 border-white">
+            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-white p-3 rounded-2xl shadow-lg border-4 border-white bg-brand">
                <QrCode size={20} />
             </div>
           </motion.div>
@@ -111,7 +111,7 @@ export default function QRPage() {
             <div className="grid grid-cols-2 gap-4">
                <button 
                 onClick={handleDownloadQR}
-                className="flex items-center justify-center gap-2 bg-blue-50 text-blue-700 py-3.5 rounded-3xl font-black text-xs hover:bg-blue-100 transition-all border border-blue-100"
+                className="flex items-center justify-center gap-2 py-3.5 rounded-3xl font-black text-xs transition-all border bg-brand-light text-brand border-brand"
                >
                  <Download size={16} />
                  Download JPG

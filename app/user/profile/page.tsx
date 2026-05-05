@@ -23,6 +23,7 @@ export default function ProfilePage() {
     designation: "",
     bloodGroup: "",
     aadharNumber: "",
+    edpNumber: "",
     profileImage: "",
   });
 
@@ -49,6 +50,7 @@ export default function ProfilePage() {
         designation: user.designation || "",
         bloodGroup: user.bloodGroup || "",
         aadharNumber: user.aadharNumber || "",
+        edpNumber: user.edpNumber || "",
         profileImage: user.profileImage || "",
       });
     }
@@ -77,6 +79,18 @@ export default function ProfilePage() {
   };
 
   const handleSaveProfile = async () => {
+    if (localProfile.number && !/^[0-9]{10}$/.test(localProfile.number)) {
+      toast.error('Phone number must be exactly 10 digits');
+      return;
+    }
+    if (localProfile.whatsappNumber && !/^[0-9]{10}$/.test(localProfile.whatsappNumber)) {
+      toast.error('WhatsApp number must be exactly 10 digits');
+      return;
+    }
+    if (localProfile.aadharNumber && !/^[0-9]{12}$/.test(localProfile.aadharNumber)) {
+      toast.error('Aadhar number must be exactly 12 digits');
+      return;
+    }
     const formData = new FormData();
     const textFields: Record<string, string> = {
       name: localProfile.name,
@@ -87,6 +101,7 @@ export default function ProfilePage() {
       homeAddress: localProfile.homeAddress,
       timing: localProfile.timing,
       website: localProfile.website,
+      edpNumber: localProfile.edpNumber,
       bloodGroup: localProfile.bloodGroup,
       aadharNumber: localProfile.aadharNumber,
     };
@@ -107,15 +122,16 @@ export default function ProfilePage() {
 
   const fields = [
     { key: "name", label: "Full Name", icon: User, placeholder: "Enter full name" },
+    { key: "edpNumber", label: "EDP Number", icon: CreditCard, placeholder: "Enter EDP number" },
     { key: "designation", label: "Designation", icon: User, placeholder: "e.g. Senior Officer, Manager" },
-    { key: "number", label: "Phone Number", icon: Phone, placeholder: "Enter phone number" },
-    { key: "whatsappNumber", label: "WhatsApp Number", icon: Phone, placeholder: "Enter WhatsApp number" },
+    { key: "number", label: "Phone Number", icon: Phone, placeholder: "Enter phone number", maxLen: 10, numeric: true },
+    { key: "whatsappNumber", label: "WhatsApp Number", icon: Phone, placeholder: "Enter WhatsApp number", maxLen: 10, numeric: true },
     { key: "location", label: "Address", icon: MapPin, placeholder: "Enter address" },
     { key: "homeAddress", label: "Home Address", icon: MapPin, placeholder: "Enter home address" },
     { key: "timing", label: "Timing", icon: Clock, placeholder: "e.g. Mon-Sat: 9AM - 6PM" },
     { key: "website", label: "Website", icon: Globe, placeholder: "Enter website URL" },
     { key: "bloodGroup", label: "Blood Group", icon: Heart, placeholder: "e.g. A+, B+, O+" },
-    { key: "aadharNumber", label: "Aadhar Number", icon: CreditCard, placeholder: "Enter 12-digit Aadhar number" },
+    { key: "aadharNumber", label: "Aadhar Number", icon: CreditCard, placeholder: "Enter 12-digit Aadhar number", maxLen: 12, numeric: true },
   ];
 
   const getImageUrl = () => {
@@ -132,7 +148,7 @@ export default function ProfilePage() {
     return (
       <DashboardLayout type="user">
         <div className="flex items-center justify-center min-h-[400px]">
-          <Loader2 className="animate-spin text-blue-600" size={32} />
+          <Loader2 className="animate-spin" size={32} style={{ color: '#C56B36' }} />
         </div>
       </DashboardLayout>
     );
@@ -157,7 +173,7 @@ export default function ProfilePage() {
               </div>
               <button
                 onClick={() => fileRef.current?.click()}
-                className="absolute -bottom-2 -right-2 h-9 w-9 bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 transition-colors rounded-full border-2 border-white shadow-lg"
+                className="absolute -bottom-2 -right-2 h-9 w-9 text-white flex items-center justify-center transition-colors rounded-full border-2 border-white shadow-lg btn-brand"
               >
                 <Camera size={16} />
               </button>
@@ -167,11 +183,13 @@ export default function ProfilePage() {
 
           {/* Fields */}
           <div className="divide-y divide-gray-50">
-            {fields.map(({ key, label, icon: Icon, placeholder }) => (
+            {fields.map(({ key, label, icon: Icon, placeholder, maxLen, numeric }: any) => (
               <div key={key} className="flex items-start justify-between py-4 gap-4 group">
                 <div className="flex items-start gap-4 flex-1 min-w-0">
-                  <div className="h-9 w-9 bg-gray-50 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-blue-50 transition-colors">
-                    <Icon size={16} className="text-gray-400 group-hover:text-blue-500 transition-colors" />
+                  <div className="h-9 w-9 bg-gray-50 rounded-xl flex items-center justify-center shrink-0 transition-colors" style={{ '--hover-bg': '#C56B3610' } as any}
+                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#C56B3615')}
+                    onMouseLeave={e => (e.currentTarget.style.backgroundColor = '')}>
+                    <Icon size={16} className="text-gray-400" />
                   </div>
                   <div className="flex-1 min-w-0 pt-0.5">
                     <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">{label}</p>
@@ -179,10 +197,17 @@ export default function ProfilePage() {
                       <input
                         autoFocus
                         value={tempValue}
-                        onChange={(e) => setTempValue(e.target.value)}
+                        onChange={(e) => {
+                          let val = e.target.value;
+                          if (numeric) val = val.replace(/\D/g, '');
+                          if (maxLen) val = val.slice(0, maxLen);
+                          setTempValue(val);
+                        }}
                         onKeyDown={(e) => e.key === "Enter" && saveField()}
                         placeholder={placeholder}
-                        className="w-full border-b-2 border-blue-600 bg-blue-50/50 px-2 py-1 text-sm font-semibold focus:outline-none transition-all"
+                        maxLength={maxLen}
+                        inputMode={numeric ? 'numeric' : 'text'}
+                        className="w-full border-b-2 bg-brand-light px-2 py-1 text-sm font-semibold focus:outline-none transition-all border-brand"
                       />
                     ) : (
                       <p className="text-sm font-bold text-gray-900 truncate">
@@ -204,7 +229,10 @@ export default function ProfilePage() {
                   ) : (
                     <button
                       onClick={() => startEdit(key, (localProfile as any)[key])}
-                      className="h-8 w-8 text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all rounded-lg flex items-center justify-center"
+                      className="h-8 w-8 text-gray-400 hover:bg-orange-50 transition-all rounded-lg flex items-center justify-center"
+                      style={{ '--hover-color': '#C56B36' } as any}
+                      onMouseEnter={e => { e.currentTarget.style.color = '#C56B36'; }}
+                      onMouseLeave={e => { e.currentTarget.style.color = ''; }}
                     >
                       <Pencil size={14} />
                     </button>
@@ -217,7 +245,7 @@ export default function ProfilePage() {
           <button
             onClick={handleSaveProfile}
             disabled={loading}
-            className="w-full mt-8 bg-blue-600 text-white py-4 text-sm font-black uppercase tracking-widest hover:bg-blue-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3 rounded-2xl shadow-xl shadow-blue-500/25 disabled:opacity-50"
+            className="w-full mt-8 text-white py-4 text-sm font-black uppercase tracking-widest active:scale-[0.98] transition-all flex items-center justify-center gap-3 rounded-2xl disabled:opacity-50 btn-brand"
           >
             {loading ? <Loader2 size={18} className="animate-spin" /> : <Check size={18} />}
             {loading ? "Saving Changes..." : "Save Profile Changes"}
