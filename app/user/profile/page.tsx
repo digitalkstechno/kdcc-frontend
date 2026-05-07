@@ -25,6 +25,11 @@ export default function ProfilePage() {
     aadharNumber: "",
     edpNumber: "",
     profileImage: "",
+    instagramLink: "",
+    facebookLink: "",
+    youtubeLink: "",
+    linkedinLink: "",
+    twitterLink: "",
   });
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -52,6 +57,11 @@ export default function ProfilePage() {
         aadharNumber: user.aadharNumber || "",
         edpNumber: user.edpNumber || "",
         profileImage: user.profileImage || "",
+        instagramLink: user.instagramLink || "",
+        facebookLink: user.facebookLink || "",
+        youtubeLink: user.youtubeLink || "",
+        linkedinLink: user.linkedinLink || "",
+        twitterLink: user.twitterLink || "",
       });
     }
   }, [user]);
@@ -104,6 +114,11 @@ export default function ProfilePage() {
       edpNumber: localProfile.edpNumber,
       bloodGroup: localProfile.bloodGroup,
       aadharNumber: localProfile.aadharNumber,
+      instagramLink: localProfile.instagramLink,
+      facebookLink: localProfile.facebookLink,
+      youtubeLink: localProfile.youtubeLink,
+      linkedinLink: localProfile.linkedinLink,
+      twitterLink: localProfile.twitterLink,
     };
     Object.entries(textFields).forEach(([key, val]) => {
       formData.append(key, val);
@@ -132,6 +147,11 @@ export default function ProfilePage() {
     { key: "website", label: "Website", icon: Globe, placeholder: "Enter website URL" },
     { key: "bloodGroup", label: "Blood Group", icon: Heart, placeholder: "e.g. A+, B+, O+" },
     { key: "aadharNumber", label: "Aadhar Number", icon: CreditCard, placeholder: "Enter 12-digit Aadhar number", maxLen: 12, numeric: true },
+    { key: "instagramLink", label: "Instagram", icon: Globe, placeholder: "https://instagram.com/username" },
+    { key: "facebookLink", label: "Facebook", icon: Globe, placeholder: "https://facebook.com/username" },
+    { key: "youtubeLink", label: "YouTube", icon: Globe, placeholder: "https://youtube.com/@channel" },
+    { key: "linkedinLink", label: "LinkedIn", icon: Globe, placeholder: "https://linkedin.com/in/username" },
+    { key: "twitterLink", label: "X (Twitter)", icon: Globe, placeholder: "https://x.com/username" },
   ];
 
   const getImageUrl = () => {
