@@ -12,6 +12,7 @@ export default function SerialSlugViewPage({ params }: Props) {
   const [builderData, setBuilderData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [whatsappNumber, setWhatsappNumber] = useState('');
+  const [menuOpen, setMenuOpen] = useState(false);
   const [slug, setSlug] = useState('');
   const [serial, setSerial] = useState('');
 
@@ -64,13 +65,18 @@ export default function SerialSlugViewPage({ params }: Props) {
   };
 
   const handleShare = () => {
-    const profileUrl = window.location.href;
-    if (navigator.share) {
-      navigator.share({ title: builderData?.name || 'MK GROUP', url: profileUrl }).catch(() => {
-        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(profileUrl)}`, '_blank');
-      });
+    const profileUrl = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/${serial}/${slug}`;
+    const num = whatsappNumber.replace(/\D/g, '');
+    if (num) {
+      window.open(`https://wa.me/${num}?text=${profileUrl}`, '_blank');
     } else {
-      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(profileUrl)}`, '_blank');
+      if (navigator.share) {
+        navigator.share({ title: builderData?.name || 'MK GROUP', url: profileUrl }).catch(() => {
+          window.open(`https://wa.me/?text=${encodeURIComponent(profileUrl)}`, '_blank');
+        });
+      } else {
+        window.open(`https://wa.me/?text=${encodeURIComponent(profileUrl)}`, '_blank');
+      }
     }
   };
 
@@ -90,29 +96,36 @@ export default function SerialSlugViewPage({ params }: Props) {
           <div className="text-white px-4 py-1 rounded-full text-sm font-semibold" style={{ backgroundColor: '#C56B36' }}>
             Total View : {builderData?.viewCount || 0}
           </div>
-          <Menu className="ml-3 text-gray-700" size={24} />
+          <div className="relative ml-3">
+            <Menu className="text-gray-700 cursor-pointer" size={24} onClick={() => setMenuOpen(!menuOpen)} />
+            {menuOpen && (
+              <div className="absolute right-0 top-8 cursor-pointer bg-white border border-gray-200 rounded-xl shadow-lg z-50 w-44">
+                <button onClick={() => { window.open('https://www.khedadccb.bank.in/', '_blank'); setMenuOpen(false); }} className="w-full flex items-center gap-2  cursor-pointer px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-xl">
+                  <Globe size={16} style={{ color: '#C56B36'  }} /> View Site
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="px-6 pb-8">
-          <div className="flex items-center gap-6 mb-6">
-            <div className="w-40 h-40 rounded-full overflow-hidden border-4 p-1 flex-shrink-0" style={{ borderColor: '#C56B3633' }}>
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-28 h-28 rounded-full overflow-hidden border-4 p-1 flex-shrink-0" style={{ borderColor: '#C56B3633' }}>
               {getProfileImage() ? (
-                <Image src={getProfileImage()!} alt={builderData?.name || 'Profile'} width={160} height={160} className="rounded-full object-cover w-full h-full" priority unoptimized />
+                <Image src={getProfileImage()!} alt={builderData?.name || 'Profile'} width={112} height={112} className="rounded-full object-cover w-full h-full" priority unoptimized />
               ) : (
                 <div className="w-full h-full rounded-full bg-gray-100 flex items-center justify-center">
-                  <User size={48} className="text-gray-300" />
+                  <User size={40} className="text-gray-300" />
                 </div>
               )}
             </div>
-            <div className="flex flex-col gap-3 flex-1">
-              <div className="flex gap-2 items-center">
+            <div className="flex gap-2 flex-1 min-w-0 justify-end">
                 <button onClick={handleSaveContact} className="flex items-center justify-center gap-2 text-white px-4 h-10 rounded-full font-semibold text-sm" style={{ backgroundColor: '#C56B36' }}>
-                  <User size={16} /> Save Contact
-                </button>
-                <button onClick={() => { const num = builderData?.number; if (num) window.open(`tel:${num}`, '_self'); }} className="flex items-center justify-center h-10 w-10 rounded-full border-2" style={{ borderColor: '#C56B36', color: '#C56B36' }}>
-                  <Phone size={18} strokeWidth={2.5} />
-                </button>
-              </div>
+                <User size={16} /> Save Contact
+              </button>
+              {/* <button onClick={() => { const num = builderData?.number; if (num) window.open(`tel:${num}`, '_self'); }} className="flex items-center justify-center h-10 w-10 rounded-full border-2 flex-shrink-0" style={{ borderColor: '#C56B36', color: '#C56B36' }}>
+                <Phone size={16} strokeWidth={2.5} />
+              </button> */}
             </div>
           </div>
 
@@ -122,17 +135,17 @@ export default function SerialSlugViewPage({ params }: Props) {
           </div>
 
           <div className="space-y-4">
-            <div className="border-2 rounded-xl p-4 flex items-center gap-4" style={{ borderColor: '#C56B36' }}>
+            <div className="border-2 rounded-xl p-4 flex items-center gap-4 cursor-pointer" style={{ borderColor: '#C56B36' }} onClick={() => { if (builderData?.email) window.open(`https://mail.google.com/mail/?view=cm&to=${builderData.email}`, '_blank'); }}>
               <Mail size={24} style={{ color: '#C56B36' }} />
-              <span className="text-gray-800 font-medium text-lg">{builderData?.email || 'email@example.com'}</span>
+              <span className="text-gray-800 font-medium text-lg">{builderData?.email}</span>
               <ChevronRight className="ml-auto" size={20} style={{ color: '#C56B36' }} />
             </div>
-            <div className="border-2 rounded-xl p-4 flex items-center gap-4" style={{ borderColor: '#C56B36' }}>
-              <MessageCircle size={24} style={{ color: '#C56B36' }} />
+            <div className="border-2 rounded-xl p-4 flex items-center gap-4 cursor-pointer" style={{ borderColor: '#C56B36' }} onClick={() => { const num = builderData?.whatsappNumber || builderData?.number; if (num) window.open(`https://wa.me/${num.replace(/\D/g, '')}`, '_blank'); }}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#C56B36"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
               <span className="text-gray-800 font-medium text-lg">{builderData?.whatsappNumber || builderData?.number}</span>
               <ChevronRight className="ml-auto" size={20} style={{ color: '#C56B36' }} />
             </div>
-            <div className="border-2 rounded-xl p-4 flex items-center gap-4" style={{ borderColor: '#C56B36' }}>
+            <div className="border-2 rounded-xl p-4 flex items-center gap-4 cursor-pointer" style={{ borderColor: '#C56B36' }} onClick={() => { if (builderData?.number) window.open(`tel:${builderData.number}`, '_self'); }}>
               <Phone size={24} style={{ color: '#C56B36' }} />
               <span className="text-gray-800 font-medium text-lg">{builderData?.number}</span>
               <ChevronRight className="ml-auto" size={20} style={{ color: '#C56B36' }} />
@@ -186,16 +199,18 @@ export default function SerialSlugViewPage({ params }: Props) {
             )}
           </div>
 
-          <div className="flex gap-4 mt-6 p-4 bg-gray-100 rounded-lg">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg p-3">
-                <span className="text-2xl">🇮🇳</span>
-                <input type="text" placeholder="Enter whatsapp number" value={whatsappNumber} onChange={(e) => setWhatsappNumber(e.target.value)} className="flex-1 outline-none text-gray-600" />
-              </div>
+          <div className="flex flex-col gap-3 mt-6 p-4 bg-gray-100 rounded-lg">
+            <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg p-3">
+              <span className="text-2xl">🇮🇳</span>
+              <input type="text" placeholder="Enter whatsapp number" value={whatsappNumber} onChange={(e) => setWhatsappNumber(e.target.value)} className="flex-1 outline-none text-gray-600 text-sm" />
             </div>
-            <button onClick={handleShare} className="bg-green-500 text-white px-6 rounded-lg flex items-center gap-2 font-semibold hover:bg-green-600 transition-colors">
-              <Share2 size={20} /> Share
+            <button onClick={handleShare} className="w-full bg-green-500 text-white py-3 rounded-lg flex items-center justify-center gap-2 font-semibold hover:bg-green-600 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Share
             </button>
+          </div>
+
+          <div className="text-center mt-6 pb-2">
+            <p className="text-xs text-gray-400">Powered By <span className="font-bold" style={{ color: '#C56B36' }}>kdcc.live</span></p>
           </div>
         </div>
       </div>
