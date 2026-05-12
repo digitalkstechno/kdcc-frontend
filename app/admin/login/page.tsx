@@ -4,12 +4,13 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Lock, Mail, ArrowRight, ShieldCheck, User } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import { loginAdmin, clearError } from "@/lib/redux/slices/authSlice";
 import { RootState, AppDispatch } from "@/lib/redux/store";
 import { toast } from "sonner";
 
-const C = '#C56B36';
+const C = '#F27733';
 
 export default function AdminLoginPage() {
   const [formData, setFormData] = useState({ identifier: "", password: "" });
@@ -34,11 +35,18 @@ export default function AdminLoginPage() {
     <div className="min-h-screen bg-gray-50/50 flex items-center justify-center p-8">
       <div className="w-full max-w-md">
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl text-white mb-6 shadow-xl" style={{ backgroundColor: C }}>
-            <ShieldCheck size={32} />
+          <div className="flex justify-center mb-8">
+            <Image 
+              src="/logo.png" 
+              alt="KDCC Logo" 
+              width={200} 
+              height={60} 
+              className="object-contain"
+              unoptimized
+            />
           </div>
-          <h1 className="text-4xl font-black text-gray-900 tracking-tight">Admin Login</h1>
-          <p className="text-gray-500 mt-3 font-medium">Please enter your admin credentials below.</p>
+          <h1 className="text-4xl font-black text-[#1A2B71] tracking-tight">Admin Portal</h1>
+          <p className="text-gray-500 mt-3 font-medium text-sm">Secure access for KDCC Bank administrators.</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
@@ -95,11 +103,11 @@ export default function AdminLoginPage() {
         </form>
 
         <div className="mt-8 pt-6 border-t border-gray-100 flex items-center justify-center gap-6">
-          <Link href="/user/login" className="text-[10px] font-black text-gray-400 uppercase tracking-[2px] transition-colors flex items-center gap-2 hover:text-[#C56B36]">
+          <Link href="/user/login" className="text-[10px] font-black text-gray-400 uppercase tracking-[2px] transition-colors flex items-center gap-2 hover:text-[#F27733]">
             <User size={14} /> User Access
           </Link>
           <div className="h-1 w-1 bg-gray-300 rounded-full" />
-          <Link href="/" className="text-[10px] font-black text-gray-400 uppercase tracking-[2px] transition-colors hover:text-[#C56B36]">
+          <Link href="/" className="text-[10px] font-black text-gray-400 uppercase tracking-[2px] transition-colors hover:text-[#F27733]">
             Return Home
           </Link>
         </div>

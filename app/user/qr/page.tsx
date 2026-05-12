@@ -75,7 +75,7 @@ export default function QRPage() {
                  />
                ) : (
                  <div className="w-64 h-64 flex items-center justify-center bg-gray-50 rounded-3xl">
-                   <Loader2 className="animate-spin" size={30} style={{ color: '#C56B36' }} />
+                   <Loader2 className="animate-spin" size={30} style={{ color: '#F27733' }} />
                  </div>
                )}
                {/* Decorative corners */}

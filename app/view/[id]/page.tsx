@@ -58,7 +58,7 @@ export default function ViewPage({ params }: ViewPageProps) {
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-t-transparent" style={{ borderColor: '#C56B36', borderTopColor: 'transparent' }} />
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-t-transparent" style={{ borderColor: '#F27733', borderTopColor: 'transparent' }} />
       </div>
     );
   }
@@ -71,7 +71,7 @@ export default function ViewPage({ params }: ViewPageProps) {
 
         {/* Header */}
         <div className="flex justify-end px-4 pt-4">
-          <div className="text-white px-4 py-1 rounded-full text-sm font-semibold" style={{ backgroundColor: '#C56B36' }}>
+          <div className="text-white px-4 py-1 rounded-full text-sm font-semibold" style={{ backgroundColor: '#F27733' }}>
             Total View : {builderData?.viewCount || 0}
           </div>
           <Menu className="ml-3 text-gray-700" size={24} />
@@ -80,7 +80,7 @@ export default function ViewPage({ params }: ViewPageProps) {
         <div className="px-6 pb-8">
           {/* Profile + Buttons */}
           <div className="flex items-center gap-6 mb-4">
-            <div className="w-40 h-40 rounded-full overflow-hidden border-4 p-1 flex-shrink-0" style={{ borderColor: '#C56B3633' }}>
+            <div className="w-40 h-40 rounded-full overflow-hidden border-4 p-1 flex-shrink-0" style={{ borderColor: '#F2773333' }}>
               {img ? (
                 <Image src={img} alt={builderData?.name || 'Profile'} width={160} height={160} className="rounded-full object-cover w-full h-full" priority unoptimized />
               ) : (
@@ -91,10 +91,10 @@ export default function ViewPage({ params }: ViewPageProps) {
             </div>
             <div className="flex flex-col gap-2 flex-1">
               <div className="flex gap-2 items-center">
-                <button onClick={handleSaveContact} className="flex items-center justify-center gap-2 text-white px-4 h-10 rounded-full font-semibold text-sm" style={{ backgroundColor: '#C56B36' }}>
+                <button onClick={handleSaveContact} className="flex items-center justify-center gap-2 text-white px-4 h-10 rounded-full font-semibold text-sm" style={{ backgroundColor: '#F27733' }}>
                   <User size={16} /> Save Contact
                 </button>
-                <button onClick={() => { const n = builderData?.number; if (n) window.open(`tel:${n}`, '_self'); }} className="flex items-center justify-center h-10 w-10 rounded-full border-2" style={{ borderColor: '#C56B36', color: '#C56B36' }}>
+                <button onClick={() => { const n = builderData?.number; if (n) window.open(`tel:${n}`, '_self'); }} className="flex items-center justify-center h-10 w-10 rounded-full border-2" style={{ borderColor: '#F27733', color: '#F27733' }}>
                   <Phone size={18} strokeWidth={2.5} />
                 </button>
               </div>
@@ -103,65 +103,65 @@ export default function ViewPage({ params }: ViewPageProps) {
 
           {/* Name & Designation */}
           <div className="mb-4">
-            <h1 className="text-2xl font-bold mb-0.5" style={{ color: '#C56B36' }}>{builderData?.name || 'Name'}</h1>
+            <h1 className="text-2xl font-bold mb-0.5" style={{ color: '#F27733' }}>{builderData?.name || 'Name'}</h1>
             {builderData?.designation && <p className="text-gray-900 text-sm font-medium">{builderData.designation}</p>}
           </div>
 
           {/* Contact Fields */}
           <div className="space-y-3">
             {builderData?.email && (
-              <div className="border-2 rounded-xl p-4 flex items-center gap-4" style={{ borderColor: '#C56B36' }}>
-                <Mail size={24} style={{ color: '#C56B36' }} />
+              <div className="border-2 rounded-xl p-4 flex items-center gap-4" style={{ borderColor: '#F27733' }}>
+                <Mail size={24} style={{ color: '#F27733' }} />
                 <span className="text-gray-800 font-medium text-lg flex-1">{builderData.email}</span>
-                <ChevronRight size={20} style={{ color: '#C56B36' }} />
+                <ChevronRight size={20} style={{ color: '#F27733' }} />
               </div>
             )}
             {(builderData?.whatsappNumber || builderData?.number) && (
-              <div className="border-2 rounded-xl p-4 flex items-center gap-4" style={{ borderColor: '#C56B36' }}>
-                <MessageCircle size={24} style={{ color: '#C56B36' }} />
+              <div className="border-2 rounded-xl p-4 flex items-center gap-4" style={{ borderColor: '#F27733' }}>
+                <MessageCircle size={24} style={{ color: '#F27733' }} />
                 <span className="text-gray-800 font-medium text-lg flex-1">{builderData?.whatsappNumber || builderData?.number}</span>
-                <ChevronRight size={20} style={{ color: '#C56B36' }} />
+                <ChevronRight size={20} style={{ color: '#F27733' }} />
               </div>
             )}
             {builderData?.number && (
-              <div className="border-2 rounded-xl p-4 flex items-center gap-4" style={{ borderColor: '#C56B36' }}>
-                <Phone size={24} style={{ color: '#C56B36' }} />
+              <div className="border-2 rounded-xl p-4 flex items-center gap-4" style={{ borderColor: '#F27733' }}>
+                <Phone size={24} style={{ color: '#F27733' }} />
                 <span className="text-gray-800 font-medium text-lg flex-1">{builderData.number}</span>
-                <ChevronRight size={20} style={{ color: '#C56B36' }} />
+                <ChevronRight size={20} style={{ color: '#F27733' }} />
               </div>
             )}
             {builderData?.location && (
-              <div className="border-2 rounded-xl p-4 flex items-start gap-4" style={{ borderColor: '#C56B36' }}>
-                <Menu className="mt-1" size={24} style={{ color: '#C56B36' }} />
+              <div className="border-2 rounded-xl p-4 flex items-start gap-4" style={{ borderColor: '#F27733' }}>
+                <Menu className="mt-1" size={24} style={{ color: '#F27733' }} />
                 <span className="text-gray-800 font-medium text-lg leading-relaxed flex-1">{builderData.location}</span>
               </div>
             )}
             {builderData?.homeAddress && (
-              <div className="border-2 rounded-xl p-4 flex items-start gap-4" style={{ borderColor: '#C56B36' }}>
+              <div className="border-2 rounded-xl p-4 flex items-start gap-4" style={{ borderColor: '#F27733' }}>
                 <div className="flex flex-col">
-                  <span className="text-xs font-bold uppercase mb-1" style={{ color: '#C56B36' }}>Home</span>
-                  <MapPin size={24} style={{ color: '#C56B36' }} />
+                  <span className="text-xs font-bold uppercase mb-1" style={{ color: '#F27733' }}>Home</span>
+                  <MapPin size={24} style={{ color: '#F27733' }} />
                 </div>
                 <span className="text-gray-800 font-medium text-lg leading-relaxed flex-1 mt-4">{builderData.homeAddress}</span>
-                <ChevronRight className="mt-4" size={20} style={{ color: '#C56B36' }} />
+                <ChevronRight className="mt-4" size={20} style={{ color: '#F27733' }} />
               </div>
             )}
             {builderData?.timing && (
-              <div className="border-2 rounded-xl p-4 flex items-center gap-4" style={{ borderColor: '#C56B36' }}>
-                <Clock size={24} style={{ color: '#C56B36' }} />
+              <div className="border-2 rounded-xl p-4 flex items-center gap-4" style={{ borderColor: '#F27733' }}>
+                <Clock size={24} style={{ color: '#F27733' }} />
                 <span className="text-gray-800 font-medium text-lg flex-1">{builderData.timing}</span>
               </div>
             )}
             {builderData?.website && (
-              <div className="border-2 rounded-xl p-4 flex items-center gap-4" style={{ borderColor: '#C56B36' }}>
-                <Globe size={24} style={{ color: '#C56B36' }} />
+              <div className="border-2 rounded-xl p-4 flex items-center gap-4" style={{ borderColor: '#F27733' }}>
+                <Globe size={24} style={{ color: '#F27733' }} />
                 <span className="text-gray-800 font-medium text-lg flex-1 break-all">{builderData.website}</span>
-                <ChevronRight size={20} style={{ color: '#C56B36' }} />
+                <ChevronRight size={20} style={{ color: '#F27733' }} />
               </div>
             )}
             {builderData?.bloodGroup && (
-              <div className="border-2 rounded-xl p-4 flex items-center gap-4" style={{ borderColor: '#C56B36' }}>
-                <Heart size={24} style={{ color: '#C56B36' }} />
+              <div className="border-2 rounded-xl p-4 flex items-center gap-4" style={{ borderColor: '#F27733' }}>
+                <Heart size={24} style={{ color: '#F27733' }} />
                 <div className="flex-1">
                   <p className="text-xs font-bold uppercase text-gray-400 mb-0.5">Blood Group</p>
                   <span className="text-gray-800 font-medium text-lg">{builderData.bloodGroup}</span>
@@ -169,8 +169,8 @@ export default function ViewPage({ params }: ViewPageProps) {
               </div>
             )}
             {builderData?.aadharNumber && (
-              <div className="border-2 rounded-xl p-4 flex items-center gap-4" style={{ borderColor: '#C56B36' }}>
-                <CreditCard size={24} style={{ color: '#C56B36' }} />
+              <div className="border-2 rounded-xl p-4 flex items-center gap-4" style={{ borderColor: '#F27733' }}>
+                <CreditCard size={24} style={{ color: '#F27733' }} />
                 <div className="flex-1">
                   <p className="text-xs font-bold uppercase text-gray-400 mb-0.5">Aadhar Number</p>
                   <span className="text-gray-800 font-medium text-lg">{builderData.aadharNumber}</span>

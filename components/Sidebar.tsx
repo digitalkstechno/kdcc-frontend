@@ -112,7 +112,7 @@ export default function Sidebar({ type }: SidebarProps) {
                             href={sub.href}
                             className={cn(
                               "flex items-center gap-3 px-3 py-2 text-xs font-medium transition-colors rounded-md",
-                              isSubActive ? "bg-orange-50 text-[#C56B36]" : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
+                              isSubActive ? "bg-orange-50 text-[#F27733]" : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
                             )}
                           >
                             {sub.label}
@@ -129,7 +129,7 @@ export default function Sidebar({ type }: SidebarProps) {
               <>
                 <link.icon className={cn(
                   "h-4 w-4 shrink-0",
-                  isActive ? "text-[#C56B36]" : "text-gray-400"
+                  isActive ? "text-[#F27733]" : "text-gray-400"
                 )} />
                 <span className="flex-1 text-left">{link.label}</span>
                 {isActive && <div className="h-1.5 w-1.5 rounded-full bg-brand" />}
@@ -158,7 +158,7 @@ export default function Sidebar({ type }: SidebarProps) {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors",
                   isActive
-                    ? "bg-orange-50 text-[#C56B36] border-r-2 border-[#C56B36]"
+                    ? "bg-orange-50 text-[#F27733] border-r-2 border-[#F27733]"
                     : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                 )}
               >

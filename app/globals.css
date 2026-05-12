@@ -19,24 +19,33 @@
 }
 
 @layer utilities {
-  /* Brand color #C56B36 utility classes */
-  .bg-brand { background-color: #C56B36; }
-  .bg-brand-light { background-color: #C56B3615; }
-  .text-brand { color: #C56B36; }
-  .border-brand { border-color: #C56B36; }
-  .ring-brand { --tw-ring-color: #C56B36; }
-  .hover\:bg-brand:hover { background-color: #b05e2e; }
-  .hover\:text-brand:hover { color: #C56B36; }
-  .hover\:bg-brand-light:hover { background-color: #C56B3615; }
-  .focus\:border-brand:focus { border-color: #C56B36; }
+  /* Brand colors */
+  .bg-brand { background-color: #F27733; }
+  .bg-brand-secondary { background-color: #1A2B71; }
+  .bg-brand-light { background-color: #F2773315; }
+  .text-brand { color: #F27733; }
+  .text-brand-secondary { color: #1A2B71; }
+  .border-brand { border-color: #F27733; }
+  .border-brand-secondary { border-color: #1A2B71; }
+  .ring-brand { --tw-ring-color: #F27733; }
+  .hover\:bg-brand:hover { background-color: #e06622; }
+  .hover\:text-brand:hover { color: #F27733; }
+  .hover\:bg-brand-light:hover { background-color: #F2773315; }
+  .focus\:border-brand:focus { border-color: #F27733; outline: none; }
   .btn-brand {
-    background-color: #C56B36;
+    background-color: #F27733;
     color: white;
     transition: opacity 0.2s;
   }
-  .btn-brand:hover { background-color: #b05e2e; }
+  .btn-brand:hover { background-color: #e06622; }
+  .btn-brand-secondary {
+    background-color: #1A2B71;
+    color: white;
+    transition: opacity 0.2s;
+  }
+  .btn-brand-secondary:hover { opacity: 0.9; }
   .btn-brand:disabled { opacity: 0.5; }
-  .input-brand:focus { border-color: #C56B36; outline: none; }
+  .input-brand:focus { border-color: #F27733; outline: none; }
 
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
@@ -100,3 +109,15 @@
     animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 }
+  /* Phone Input Overrides */
+  .react-tel-input .form-control {
+    border-radius: 12px !important;
+    font-family: inherit !important;
+  }
+  .react-tel-input .flag-dropdown {
+    border-radius: 12px 0 0 12px !important;
+    background: white !important;
+  }
+  .react-tel-input .selected-flag {
+    border-radius: 12px 0 0 12px !important;
+  }

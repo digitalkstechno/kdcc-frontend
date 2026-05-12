@@ -61,7 +61,7 @@ export default function DashboardLayout({ children, type, title }: DashboardLayo
   if (!isAuthorized) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="h-10 w-10 border-4 border-t-transparent rounded-full animate-spin" style={{ borderColor: '#C56B36', borderTopColor: 'transparent' }} />
+        <div className="h-10 w-10 border-4 border-t-transparent rounded-full animate-spin" style={{ borderColor: '#F27733', borderTopColor: 'transparent' }} />
       </div>
     );
   }

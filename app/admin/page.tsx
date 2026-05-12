@@ -283,8 +283,8 @@ export default function AdminPage() {
           <button
             onClick={() => handleEditUser(row)}
             className="p-1.5 text-gray-400 hover:bg-orange-50 rounded transition-colors"
-            style={{ '--hover-color': '#C56B36' } as any}
-            onMouseEnter={e => (e.currentTarget.style.color = '#C56B36')}
+            style={{ '--hover-color': '#F27733' } as any}
+            onMouseEnter={e => (e.currentTarget.style.color = '#F27733')}
             onMouseLeave={e => (e.currentTarget.style.color = '')}
           >
             <Pencil size={15} />

@@ -168,7 +168,7 @@ export default function ProfilePage() {
     return (
       <DashboardLayout type="user">
         <div className="flex items-center justify-center min-h-[400px]">
-          <Loader2 className="animate-spin" size={32} style={{ color: '#C56B36' }} />
+          <Loader2 className="animate-spin" size={32} style={{ color: '#F27733' }} />
         </div>
       </DashboardLayout>
     );
@@ -206,8 +206,8 @@ export default function ProfilePage() {
             {fields.map(({ key, label, icon: Icon, placeholder, maxLen, numeric }: any) => (
               <div key={key} className="flex items-start justify-between py-4 gap-4 group">
                 <div className="flex items-start gap-4 flex-1 min-w-0">
-                  <div className="h-9 w-9 bg-gray-50 rounded-xl flex items-center justify-center shrink-0 transition-colors" style={{ '--hover-bg': '#C56B3610' } as any}
-                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#C56B3615')}
+                  <div className="h-9 w-9 bg-gray-50 rounded-xl flex items-center justify-center shrink-0 transition-colors" style={{ '--hover-bg': '#F2773310' } as any}
+                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#F2773315')}
                     onMouseLeave={e => (e.currentTarget.style.backgroundColor = '')}>
                     <Icon size={16} className="text-gray-400" />
                   </div>
@@ -250,8 +250,8 @@ export default function ProfilePage() {
                     <button
                       onClick={() => startEdit(key, (localProfile as any)[key])}
                       className="h-8 w-8 text-gray-400 hover:bg-orange-50 transition-all rounded-lg flex items-center justify-center"
-                      style={{ '--hover-color': '#C56B36' } as any}
-                      onMouseEnter={e => { e.currentTarget.style.color = '#C56B36'; }}
+                      style={{ '--hover-color': '#F27733' } as any}
+                      onMouseEnter={e => { e.currentTarget.style.color = '#F27733'; }}
                       onMouseLeave={e => { e.currentTarget.style.color = ''; }}
                     >
                       <Pencil size={14} />
