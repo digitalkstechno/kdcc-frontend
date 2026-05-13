@@ -195,7 +195,11 @@ export default function SerialSlugViewPage({ params }: Props) {
                 <CreditCard size={24} style={{ color: '#F27733' }} />
                 <div className="flex-1">
                   <p className="text-xs font-bold uppercase text-gray-400 mb-0.5">Aadhar Number</p>
-                  <span className="text-gray-800 font-medium text-lg">{builderData.aadharNumber}</span>
+                  <span className="text-gray-800 font-medium text-lg">
+                    {builderData.aadharNumber.length > 4 
+                      ? 'X'.repeat(builderData.aadharNumber.length - 4) + builderData.aadharNumber.slice(-4) 
+                      : builderData.aadharNumber}
+                  </span>
                 </div>
               </div>
             )}
