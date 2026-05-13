@@ -1,7 +1,7 @@
 "use client";
 
 import DashboardLayout from "@/components/DashboardLayout";
-import { Plus, CreditCard, BarChart3, Users, Clock4, Eye, EyeOff, UserPlus, Pencil, Trash2, X, Check, Download } from "lucide-react";
+import { Plus, CreditCard, BarChart3, Users, Clock4, Eye, EyeOff, UserPlus, Pencil, Trash2, X, Check, Download, QrCode, ExternalLink } from "lucide-react";
 import { FormEvent, useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
@@ -31,6 +31,7 @@ export default function AdminPage() {
   const [bulkUploading, setBulkUploading] = useState(false);
   const [bulkErrors, setBulkErrors] = useState<string[]>([]);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [qrUser, setQrUser] = useState<any>(null);
 
   const handleDownloadExcel = async () => {
     try {
@@ -137,16 +138,7 @@ export default function AdminPage() {
 
   const handleUpdateUser = async (e: FormEvent) => {
     e.preventDefault();
-    try {
-      const response = await api.put(`/user/update/${editingUser._id}`, editForm);
-      if (response.data.status === "Success") {
-        toast.success("User updated successfully");
-        setEditingUser(null);
-        dispatch(fetchUsers({ page: currentPage, search: searchQuery }));
-      }
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Failed to update user");
-    }
+    // Logic moved to /admin/edit-card/[id]
   };
 
   const handleDeleteUser = async (userId: string) => {
@@ -281,7 +273,14 @@ export default function AdminPage() {
             <Eye size={15} />
           </button>
           <button
-            onClick={() => handleEditUser(row)}
+            onClick={() => setQrUser(row)}
+            className="p-1.5 text-gray-400 hover:text-brand hover:bg-brand/5 rounded transition-colors"
+            title="View QR Code"
+          >
+            <QrCode size={15} />
+          </button>
+          <button
+            onClick={() => router.push(`/admin/edit-card/${row._id}`)}
             className="p-1.5 text-gray-400 hover:bg-orange-50 rounded transition-colors"
             style={{ '--hover-color': '#F27733' } as any}
             onMouseEnter={e => (e.currentTarget.style.color = '#F27733')}
@@ -341,35 +340,6 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* Edit User Modal */}
-        {editingUser && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-            <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-tight">Edit User</h3>
-                <button onClick={() => setEditingUser(null)} className="p-1 text-gray-400 hover:text-gray-700"><X size={18} /></button>
-              </div>
-              <form onSubmit={handleUpdateUser} className="space-y-3">
-                <div>
-                  <label className={labelCls}>Full Name</label>
-                  <input required value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} className={inputCls} placeholder="Full Name" />
-                </div>
-                <div>
-                  <label className={labelCls}>Email</label>
-                  <input type="email" required value={editForm.email} onChange={(e) => setEditForm({ ...editForm, email: e.target.value })} className={inputCls} placeholder="Email" />
-                </div>
-                <div>
-                  <label className={labelCls}>Mobile Number</label>
-                  <input required value={editForm.number} onChange={(e) => setEditForm({ ...editForm, number: e.target.value })} className={inputCls} placeholder="Mobile Number" />
-                </div>
-                <div className="flex gap-2 justify-end pt-1">
-                  <button type="button" onClick={() => setEditingUser(null)} className="px-4 py-2 text-sm font-semibold text-gray-500 border border-gray-300 hover:bg-gray-50 rounded-lg">Cancel</button>
-                  <button type="submit" className="px-5 py-2 text-sm font-semibold bg-gray-900 text-white hover:bg-gray-800 rounded-lg">Update</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -388,84 +358,25 @@ export default function AdminPage() {
 
         {/* Create Card Form */}
         <div className="bg-white border border-gray-200 rounded-lg">
-          <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="h-8 w-8 bg-gray-900 rounded-lg flex items-center justify-center">
-                <UserPlus size={15} className="text-white" />
+          <div className="px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-4">
+              <div className="h-12 w-12 bg-gray-900 rounded-2xl flex items-center justify-center shadow-lg shadow-gray-900/20">
+                <UserPlus size={22} className="text-white" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-tight">Create New Card</h3>
-                <p className="text-xs text-gray-400 mt-0.5">Enter user credentials below</p>
+                <h3 className="text-lg font-black text-gray-900 uppercase tracking-tight">Create New Card</h3>
+                <p className="text-xs text-gray-400 mt-0.5">Initialize a new user profile and digital business card</p>
               </div>
             </div>
-            <div className="hidden md:flex items-center gap-1.5 text-xs text-gray-400">
-              <Clock4 size={12} /> System Ready
-            </div>
+            
+            <button 
+              onClick={() => router.push('/admin/add-card')}
+              className="w-full md:w-auto flex items-center justify-center gap-2 btn-brand text-white px-8 py-3.5 text-sm font-bold rounded-xl shadow-xl shadow-brand/20 transition-all active:scale-95"
+            >
+              <Plus size={18} />
+              Add New User & Card
+            </button>
           </div>
-
-          <form onSubmit={handleCreateUser} className="p-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div>
-                <label className={labelCls}>Full Name</label>
-                <input required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className={inputCls} placeholder="John Doe" />
-              </div>
-              <div>
-                <label className={labelCls}>Email Address</label>
-                <input type="email" required value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className={inputCls} placeholder="john@example.com" />
-              </div>
-              <div>
-                <label className={labelCls}>Mobile Number</label>
-                <input
-                  required
-                  value={formData.number}
-                  onChange={(e) => setFormData({ ...formData, number: e.target.value.replace(/\D/g, '').slice(0, 10) })}
-                  className={inputCls}
-                  placeholder="9876543210"
-                  maxLength={10}
-                />
-                {formData.number && formData.number.length !== 10 && (
-                  <p className="text-xs text-red-500 mt-1">Must be 10 digits</p>
-                )}
-              </div>
-              <div>
-                <label className={labelCls}>Password</label>
-                <div className="relative">
-                  <input type={showPassword ? "text" : "password"} required value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} className={inputCls + " pr-28"} placeholder="Enter password or generate" />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-10 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700">
-                    {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
-                  </button>
-                  <button type="button" onClick={generatePassword} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg bg-gray-100 px-2 py-1 text-[10px] uppercase font-black tracking-[0.16em] text-gray-600 hover:bg-gray-200 transition-all">
-                    Generate
-                  </button>
-                </div>
-                <div className="mt-2 text-xs text-gray-500">
-                  <div className="flex items-center gap-1">
-                    <Eye size={12} />
-                    <span>Generated password is shown below.</span>
-                  </div>
-                  <div className="mt-1 rounded-md bg-gray-100 px-3 py-2 font-mono text-sm text-gray-900">
-                    {formData.password}
-                  </div>
-                </div>
-              </div>
-              <div>
-                <label className={labelCls}>Refer Code</label>
-                <input value={formData.refer} onChange={(e) => setFormData({ ...formData, refer: e.target.value })} className={inputCls} placeholder="Optional" />
-              </div>
-              <div className="flex items-end">
-                <button type="submit" disabled={loading} className="w-full flex items-center justify-center gap-2 btn-brand text-white px-4 py-2.5 text-sm font-semibold rounded-md disabled:opacity-60">
-                  {loading ? <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><Plus size={15} /> Create Card</>}
-                </button>
-              </div>
-            </div>
-            {lastCreatedPassword && (
-              <div className="mt-3 rounded-lg bg-emerald-50 border border-emerald-100 px-4 py-3 text-sm text-emerald-900">
-                <div className="font-semibold">Last created password:</div>
-                <div className="font-mono mt-1">{lastCreatedPassword}</div>
-              </div>
-            )}
-            {error && <p className="mt-3 text-xs font-semibold text-red-500">{error}</p>}
-          </form>
         </div>
 
         {/* Users Table */}
@@ -508,6 +419,66 @@ export default function AdminPage() {
             />
           </div>
         </div>
+
+        {/* QR Code Modal */}
+        {qrUser && (
+          <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div className="bg-white rounded-[40px] shadow-2xl w-full max-w-md p-8 relative animate-in fade-in zoom-in duration-200">
+              <button 
+                onClick={() => setQrUser(null)} 
+                className="absolute top-6 right-6 p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-2xl transition-all"
+              >
+                <X size={20} />
+              </button>
+              
+              <div className="text-center space-y-1 mb-8">
+                <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight">Profile QR Code</h3>
+                <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">{qrUser.name}</p>
+              </div>
+
+              <div className="relative flex flex-col items-center">
+                 <div className="relative bg-white p-6 rounded-[45px] border border-gray-100 shadow-2xl flex items-center justify-center overflow-hidden mb-8">
+                    <img 
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(`${process.env.NEXT_PUBLIC_FRONTEND_URL || window.location.origin}/${qrUser.serialNumber}/${qrUser.name.toLowerCase().replace(/\s+/g, '-')}`)}&bgcolor=FFFFFF&color=000000&margin=20`} 
+                      alt="QR Code" 
+                      className="w-64 h-64 object-contain"
+                    />
+                    {/* Decorative corners */}
+                    <div className="absolute top-0 left-0 w-12 h-12 border-t-4 border-l-4 rounded-tl-[40px] m-4 border-brand" />
+                    <div className="absolute top-0 right-0 w-12 h-12 border-t-4 border-r-4 rounded-tr-[40px] m-4 border-brand" />
+                    <div className="absolute bottom-0 left-0 w-12 h-12 border-b-4 border-l-4 rounded-bl-[40px] m-4 border-brand" />
+                    <div className="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 rounded-br-[40px] m-4 border-brand" />
+                 </div>
+
+                 <div className="grid grid-cols-2 gap-3 w-full">
+                   <button
+                      onClick={() => {
+                        const url = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(`${process.env.NEXT_PUBLIC_FRONTEND_URL || window.location.origin}/${qrUser.serialNumber}/${qrUser.name.toLowerCase().replace(/\s+/g, '-')}`)}&bgcolor=FFFFFF&color=000000&margin=20`;
+                        fetch(url).then(res => res.blob()).then(blob => {
+                          const a = document.createElement('a');
+                          a.href = URL.createObjectURL(blob);
+                          a.download = `qr_${qrUser.name.toLowerCase().replace(/\s+/g, '_')}.png`;
+                          a.click();
+                        });
+                      }}
+                      className="flex items-center justify-center gap-2 bg-brand-light text-brand border border-brand py-4 rounded-3xl font-black text-xs uppercase tracking-widest transition-all active:scale-95"
+                   >
+                      <Download size={16} />
+                      Download
+                   </button>
+                   <a
+                      href={`${process.env.NEXT_PUBLIC_FRONTEND_URL || window.location.origin}/${qrUser.serialNumber}/${qrUser.name.toLowerCase().replace(/\s+/g, '-')}`}
+                      target="_blank"
+                      className="flex items-center justify-center gap-2 bg-gray-900 text-white py-4 rounded-3xl font-black text-xs uppercase tracking-widest shadow-xl shadow-gray-900/20 transition-all active:scale-95"
+                   >
+                      <ExternalLink size={16} />
+                      Visit
+                   </a>
+                 </div>
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
     </DashboardLayout>

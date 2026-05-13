@@ -22,7 +22,9 @@ import {
   Megaphone,
   Monitor,
   ChevronDown,
-  Phone
+  Phone,
+  PlusCircle,
+  UserPlus
 } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { logout } from "@/lib/redux/slices/authSlice";
@@ -46,6 +48,7 @@ export default function Sidebar({ type }: SidebarProps) {
 
   const adminLinks = [
     { label: "Card Maker", href: "/admin", icon: CreditCard },
+    { label: "Add Card", href: "/admin/add-card", icon: UserPlus },
     // { label: "NFC Inquiry", href: "/admin/nfc-inquiry", icon: Phone },
     // { label: "Dropbox", href: "/admin/dropbox", icon: Database },
     // { 

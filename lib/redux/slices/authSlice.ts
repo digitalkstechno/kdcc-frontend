@@ -51,6 +51,39 @@ export const createUserAdmin = createAsyncThunk(
   }
 );
 
+export const adminCreateUserAction = createAsyncThunk(
+  'auth/adminCreateUser',
+  async (formData: FormData, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await api.post('/user/admin-create', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      dispatch(fetchUsers({ page: 1 }));
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to create user');
+    }
+  }
+);
+
+export const adminUpdateUserAction = createAsyncThunk(
+  'auth/adminUpdateUser',
+  async ({ userId, formData }: { userId: string; formData: FormData }, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await api.put(`/builder/update/${userId}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to update user');
+    }
+  }
+);
+
 export const toggleUserStatus = createAsyncThunk(
   'auth/toggleUserStatus',
   async ({ userId, status }: { userId: string; status: string }, { rejectWithValue }) => {
@@ -228,13 +261,29 @@ const authSlice = createSlice({
         state.error = action.payload as string;
       })
       // Create User
-      .addCase(createUserAdmin.pending, (state) => {
+      .addCase(createUserAdmin.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      // Admin Create User
+      .addCase(adminCreateUserAction.pending, (state) => {
         state.loading = true;
       })
-      .addCase(createUserAdmin.fulfilled, (state) => {
+      .addCase(adminCreateUserAction.fulfilled, (state) => {
         state.loading = false;
       })
-      .addCase(createUserAdmin.rejected, (state, action) => {
+      .addCase(adminCreateUserAction.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      // Admin Update User
+      .addCase(adminUpdateUserAction.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(adminUpdateUserAction.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(adminUpdateUserAction.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
