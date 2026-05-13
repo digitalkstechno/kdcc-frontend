@@ -7,10 +7,11 @@ const Home = () => {
 
   const router = useRouter()
   useEffect(() => {
-    router.push('/user')
+    router.push('/admin/login')
   }, [])
   return (
-    <div>Home</div>
+    <></>
+    // <div>Home</div>
   )
 }
 
