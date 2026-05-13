@@ -65,18 +65,6 @@ export default function AddCardPage() {
     if (!localProfile.password) return toast.error("Password is required");
     if (!localProfile.number) return toast.error("Phone Number is required");
 
-    if (localProfile.number && !/^[0-9]{10}$/.test(localProfile.number)) {
-      toast.error('Phone number must be exactly 10 digits');
-      return;
-    }
-    if (localProfile.whatsappNumber && !/^[0-9]{10}$/.test(localProfile.whatsappNumber)) {
-      toast.error('WhatsApp number must be exactly 10 digits');
-      return;
-    }
-    if (localProfile.aadharNumber && !/^[0-9]{12}$/.test(localProfile.aadharNumber)) {
-      toast.error('Aadhar number must be exactly 12 digits');
-      return;
-    }
 
     const formData = new FormData();
     Object.entries(localProfile).forEach(([key, val]) => {
@@ -104,14 +92,14 @@ export default function AddCardPage() {
     { key: "name", label: "Full Name", icon: User, placeholder: "Enter full name" },
     { key: "edpNumber", label: "EDP Number", icon: CreditCard, placeholder: "Enter EDP number" },
     { key: "designation", label: "Designation", icon: User, placeholder: "e.g. Senior Officer, Manager" },
-    { key: "number", label: "Phone Number", icon: Phone, placeholder: "Enter phone number", maxLen: 10, numeric: true },
-    { key: "whatsappNumber", label: "WhatsApp Number", icon: Phone, placeholder: "Enter WhatsApp number", maxLen: 10, numeric: true },
+    { key: "number", label: "Phone Number", icon: Phone, placeholder: "Enter phone number", numeric: true },
+    { key: "whatsappNumber", label: "WhatsApp Number", icon: Phone, placeholder: "Enter WhatsApp number", numeric: true },
     { key: "location", label: "Address", icon: MapPin, placeholder: "Enter address" },
     { key: "homeAddress", label: "Home Address", icon: MapPin, placeholder: "Enter home address" },
     { key: "timing", label: "Timing", icon: Clock, placeholder: "e.g. Mon-Sat: 9AM - 6PM" },
     { key: "website", label: "Website", icon: Globe, placeholder: "Enter website URL" },
     { key: "bloodGroup", label: "Blood Group", icon: Heart, placeholder: "e.g. A+, B+, O+" },
-    { key: "aadharNumber", label: "Aadhar Number", icon: CreditCard, placeholder: "Enter 12-digit Aadhar number", maxLen: 12, numeric: true },
+    { key: "aadharNumber", label: "Aadhar Number", icon: CreditCard, placeholder: "Enter Aadhar number", numeric: true },
     { key: "instagramLink", label: "Instagram", icon: Globe, placeholder: "https://instagram.com/username" },
     { key: "facebookLink", label: "Facebook", icon: Globe, placeholder: "https://facebook.com/username" },
     { key: "youtubeLink", label: "YouTube", icon: Globe, placeholder: "https://youtube.com/@channel" },
