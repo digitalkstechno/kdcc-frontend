@@ -1,7 +1,7 @@
 "use client";
 
 import DashboardLayout from "@/components/DashboardLayout";
-import { Plus, CreditCard, BarChart3, Users, Clock4, Eye, EyeOff, UserPlus, Pencil, Trash2, X, Check, Download, QrCode, ExternalLink } from "lucide-react";
+import { Plus, CreditCard, BarChart3, Users, Clock4, Eye, EyeOff, UserPlus, Pencil, Trash2, X, Check, Download, QrCode, ExternalLink, Search } from "lucide-react";
 import { FormEvent, useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,6 +20,7 @@ export default function AdminPage() {
   const router = useRouter();
   const { users, totalRecords, currentPage, loading, error, admin } = useSelector((state: RootState) => state.auth);
   const [searchQuery, setSearchQuery] = useState("");
+  const [edpSearchQuery, setEdpSearchQuery] = useState("");
   const [showPassword, setShowPassword] = useState(true);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState<string | null>(null);
   const [editingUser, setEditingUser] = useState<any>(null);
@@ -90,10 +91,12 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (admin) {
-      const timer = setTimeout(() => { dispatch(fetchUsers({ page: 1, search: searchQuery })); }, 500);
+      const timer = setTimeout(() => { 
+        dispatch(fetchUsers({ page: 1, search: searchQuery, edpSearch: edpSearchQuery })); 
+      }, 500);
       return () => clearTimeout(timer);
     }
-  }, [searchQuery, dispatch, admin]);
+  }, [searchQuery, edpSearchQuery, dispatch, admin]);
 
   useEffect(() => {
     if (!admin) {
@@ -121,7 +124,7 @@ export default function AdminPage() {
     { label: "Total Visits", value: "1,294", icon: BarChart3 },
   ], [totalRecords]);
 
-  const handlePageChange = (page: number) => dispatch(fetchUsers({ page, search: searchQuery }));
+  const handlePageChange = (page: number) => dispatch(fetchUsers({ page, search: searchQuery, edpSearch: edpSearchQuery }));
 
   const handleToggleStatus = async (userId: string, currentStatus: string) => {
     setIsUpdatingStatus(userId);
@@ -160,33 +163,6 @@ export default function AdminPage() {
     setShowPassword(true);
   };
 
-  // const handleDownloadExcel = () => {
-  //   const headers = ['First Timestamp', 'Employee Name', 'Designation', 'EDP Number', 'Address', 'Mobile Number', 'Blood Group', 'Aadhar Number', 'Upload Image'];
-  //   const rows = users.map((u: any) => [
-  //     u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-GB') : '',
-  //     u.name || '',
-  //     u.designation || '',
-  //     u.edpNumber || '',
-  //     u.location || '',
-  //     u.number || '',
-  //     u.bloodGroup || '',
-  //     u.aadharNumber || '',
-  //     '', // Upload Image - empty
-  //   ]);
-
-  //   const csvContent = [headers, ...rows]
-  //     .map(row => row.map((cell: any) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
-  //     .join('\n');
-
-  //   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  //   const url = URL.createObjectURL(blob);
-  //   const a = document.createElement('a');
-  //   a.href = url;
-  //   a.download = `employees_${new Date().toISOString().split('T')[0]}.csv`;
-  //   a.click();
-  //   URL.revokeObjectURL(url);
-  // };
-
   const handleCreateUser = async (e: FormEvent) => {
     e.preventDefault();
     if (!/^[0-9]{10}$/.test(formData.number)) {
@@ -217,6 +193,7 @@ export default function AdminPage() {
     },
     { header: "Email", accessor: "email" },
     { header: "Phone", accessor: "number" },
+    { header: "EDP No.", accessor: "edpNumber" },
     {
       header: "Password", accessor: "password",
       render: (row: any) => {
@@ -405,7 +382,30 @@ export default function AdminPage() {
               </div>
             </div>
           </div>
-          <div className="p-6">
+          <div className="p-6 space-y-4">
+            <div className="flex flex-col md:flex-row gap-4 items-center">
+               <div className="relative group flex-1 w-full max-w-md">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-brand transition-colors" />
+                <input 
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="General search (name, email, number...)"
+                  className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-12 py-3.5 text-sm font-semibold focus:ring-2 focus:ring-brand/20 outline-none transition-all"
+                />
+              </div>
+              <div className="relative group flex-1 w-full max-w-md">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
+                <input 
+                  type="text"
+                  value={edpSearchQuery}
+                  onChange={(e) => setEdpSearchQuery(e.target.value)}
+                  placeholder="Search by EDP Number specifically"
+                  className="w-full bg-blue-50/30 border border-blue-100 rounded-2xl px-12 py-3.5 text-sm font-semibold focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                />
+              </div>
+            </div>
+            
             <CommonTable
               columns={columns}
               data={users}
@@ -414,8 +414,8 @@ export default function AdminPage() {
               currentPage={currentPage}
               limit={10}
               onPageChange={handlePageChange}
-              onSearch={(q) => setSearchQuery(q)}
-              searchPlaceholder="Search by name, email, or number..."
+              onSearch={() => {}} // Controlled externally now
+              hideSearch={true} // New prop needed
             />
           </div>
         </div>

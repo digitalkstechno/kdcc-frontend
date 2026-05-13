@@ -23,6 +23,7 @@ interface CommonTableProps {
   onPageChange: (page: number) => void;
   onSearch: (query: string) => void;
   searchPlaceholder?: string;
+  hideSearch?: boolean;
 }
 
 export default function CommonTable({
@@ -34,22 +35,25 @@ export default function CommonTable({
   limit,
   onPageChange,
   onSearch,
-  searchPlaceholder = "Search records..."
+  searchPlaceholder = "Search records...",
+  hideSearch = false
 }: CommonTableProps) {
   const totalPages = Math.ceil(totalRecords / limit);
 
   return (
     <div className="space-y-4">
       {/* Search Header */}
-      <div className="relative group max-w-md">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
-        <input 
-          type="text"
-          onChange={(e) => onSearch(e.target.value)}
-          placeholder={searchPlaceholder}
-          className="w-full bg-gray-50 border-none rounded-2xl px-12 py-3 text-sm font-medium focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
-        />
-      </div>
+      {!hideSearch && (
+        <div className="relative group max-w-md">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
+          <input 
+            type="text"
+            onChange={(e) => onSearch(e.target.value)}
+            placeholder={searchPlaceholder}
+            className="w-full bg-gray-50 border-none rounded-2xl px-12 py-3 text-sm font-medium focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+          />
+        </div>
+      )}
 
       {/* Table Content */}
       <div className="overflow-x-auto rounded-3xl border border-gray-100">
