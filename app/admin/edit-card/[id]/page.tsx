@@ -95,12 +95,8 @@ export default function EditCardPage({ params }: { params: Promise<{ id: string 
   };
 
   const handleUpdateUser = async () => {
-    if (!localProfile.name) return toast.error("Full Name is required");
-    if (!localProfile.email) return toast.error("Email is required");
-    if (!localProfile.number) return toast.error("Phone Number is required");
-
-
     const formData = new FormData();
+
     Object.entries(localProfile).forEach(([key, val]) => {
       formData.append(key, val);
     });

@@ -60,13 +60,8 @@ export default function AddCardPage() {
   };
 
   const handleCreateUser = async () => {
-    if (!localProfile.name) return toast.error("Full Name is required");
-    if (!localProfile.email) return toast.error("Email is required");
-    if (!localProfile.password) return toast.error("Password is required");
-    if (!localProfile.number) return toast.error("Phone Number is required");
-
-
     const formData = new FormData();
+
     Object.entries(localProfile).forEach(([key, val]) => {
       formData.append(key, val);
     });
