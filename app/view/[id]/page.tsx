@@ -112,21 +112,21 @@ export default function ViewPage({ params }: ViewPageProps) {
             {builderData?.email && (
               <div className="border-2 rounded-xl p-4 flex items-center gap-4" style={{ borderColor: '#F27733' }}>
                 <Mail size={24} style={{ color: '#F27733' }} />
-                <span className="text-gray-800 font-medium text-lg flex-1">{builderData.email}</span>
+                <span className="text-gray-800 font-medium text-lg flex-1 break-all">{builderData.email}</span>
                 <ChevronRight size={20} style={{ color: '#F27733' }} />
               </div>
             )}
             {(builderData?.whatsappNumber || builderData?.number) && (
               <div className="border-2 rounded-xl p-4 flex items-center gap-4" style={{ borderColor: '#F27733' }}>
                 <MessageCircle size={24} style={{ color: '#F27733' }} />
-                <span className="text-gray-800 font-medium text-lg flex-1">{builderData?.whatsappNumber || builderData?.number}</span>
+                <span className="text-gray-800 font-medium text-lg flex-1 break-all">{builderData?.whatsappNumber || builderData?.number}</span>
                 <ChevronRight size={20} style={{ color: '#F27733' }} />
               </div>
             )}
             {builderData?.number && (
               <div className="border-2 rounded-xl p-4 flex items-center gap-4" style={{ borderColor: '#F27733' }}>
                 <Phone size={24} style={{ color: '#F27733' }} />
-                <span className="text-gray-800 font-medium text-lg flex-1">{builderData.number}</span>
+                <span className="text-gray-800 font-medium text-lg flex-1 break-all">{builderData.number}</span>
                 <ChevronRight size={20} style={{ color: '#F27733' }} />
               </div>
             )}

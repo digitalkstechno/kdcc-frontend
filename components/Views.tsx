@@ -52,7 +52,7 @@ const ContactItem = ({ icon: Icon, text, isName = false, isAddress = false }: { 
     </div>
     <div className="w-[1.5px] bg-gray-200 my-1.5" />
     <div className={`flex-1 flex items-center px-4 ${isAddress ? 'py-1' : ''}`}>
-      <span className={`${isName ? 'font-black text-sm sm:text-base' : 'font-bold text-xs sm:text-sm'} text-gray-800 tracking-tight leading-none`}>
+      <span className={`${isName ? 'font-black text-sm sm:text-base' : 'font-bold text-xs sm:text-sm'} text-gray-800 tracking-tight leading-none break-all`}>
         {text}
       </span>
     </div>
