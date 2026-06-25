@@ -21,6 +21,22 @@ export default function AdminPage() {
   const { users, totalRecords, currentPage, loading, error, admin } = useSelector((state: RootState) => state.auth);
   const [searchQuery, setSearchQuery] = useState("");
   const [edpSearchQuery, setEdpSearchQuery] = useState("");
+  const [isBoardMemberFilter, setIsBoardMemberFilter] = useState<boolean>(false);
+
+  // Load initial filter from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("kdcc_admin_card_filter");
+    if (saved !== null) {
+      setIsBoardMemberFilter(saved === "true");
+    }
+  }, []);
+
+  // Save filter state to localStorage when it changes
+  const handleSetFilter = (val: boolean) => {
+    setIsBoardMemberFilter(val);
+    localStorage.setItem("kdcc_admin_card_filter", String(val));
+  };
+
   const [showPassword, setShowPassword] = useState(true);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState<string | null>(null);
   const [editingUser, setEditingUser] = useState<any>(null);
@@ -92,11 +108,11 @@ export default function AdminPage() {
   useEffect(() => {
     if (admin) {
       const timer = setTimeout(() => { 
-        dispatch(fetchUsers({ page: 1, search: searchQuery, edpSearch: edpSearchQuery })); 
+        dispatch(fetchUsers({ page: 1, search: searchQuery, edpSearch: edpSearchQuery, isBoardMember: isBoardMemberFilter })); 
       }, 500);
       return () => clearTimeout(timer);
     }
-  }, [searchQuery, edpSearchQuery, dispatch, admin]);
+  }, [searchQuery, edpSearchQuery, isBoardMemberFilter, dispatch, admin]);
 
   useEffect(() => {
     if (!admin) {
@@ -124,7 +140,7 @@ export default function AdminPage() {
     { label: "Total Visits", value: "1,294", icon: BarChart3 },
   ], [totalRecords]);
 
-  const handlePageChange = (page: number) => dispatch(fetchUsers({ page, search: searchQuery, edpSearch: edpSearchQuery }));
+  const handlePageChange = (page: number) => dispatch(fetchUsers({ page, search: searchQuery, edpSearch: edpSearchQuery, isBoardMember: isBoardMemberFilter }));
 
   const handleToggleStatus = async (userId: string, currentStatus: string) => {
     setIsUpdatingStatus(userId);
@@ -150,7 +166,7 @@ export default function AdminPage() {
       if (response.data.status === "Success") {
         toast.success("User deleted successfully");
         setDeleteConfirm(null);
-        dispatch(fetchUsers({ page: currentPage, search: searchQuery }));
+        dispatch(fetchUsers({ page: currentPage, search: searchQuery, edpSearch: edpSearchQuery, isBoardMember: isBoardMemberFilter }));
       }
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Failed to delete user");
@@ -383,26 +399,44 @@ export default function AdminPage() {
             </div>
           </div>
           <div className="p-6 space-y-4">
-            <div className="flex flex-col md:flex-row gap-4 items-center">
-               <div className="relative group flex-1 w-full max-w-md">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-brand transition-colors" />
-                <input 
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="General search (name, email, number...)"
-                  className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-12 py-3.5 text-sm font-semibold focus:ring-2 focus:ring-brand/20 outline-none transition-all"
-                />
+            <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+              <div className="flex flex-col md:flex-row gap-4 flex-1 w-full">
+                <div className="relative group flex-1 w-full max-w-md">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-brand transition-colors" />
+                  <input 
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="General search (name, email, number...)"
+                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-12 py-3.5 text-sm font-semibold focus:ring-2 focus:ring-brand/20 outline-none transition-all"
+                  />
+                </div>
+                <div className="relative group flex-1 w-full max-w-md">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
+                  <input 
+                    type="text"
+                    value={edpSearchQuery}
+                    onChange={(e) => setEdpSearchQuery(e.target.value)}
+                    placeholder="Search by EDP Number specifically"
+                    className="w-full bg-blue-50/30 border border-blue-100 rounded-2xl px-12 py-3.5 text-sm font-semibold focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                  />
+                </div>
               </div>
-              <div className="relative group flex-1 w-full max-w-md">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
-                <input 
-                  type="text"
-                  value={edpSearchQuery}
-                  onChange={(e) => setEdpSearchQuery(e.target.value)}
-                  placeholder="Search by EDP Number specifically"
-                  className="w-full bg-blue-50/30 border border-blue-100 rounded-2xl px-12 py-3.5 text-sm font-semibold focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
-                />
+
+              {/* Toggle filter for Board Members (Head) vs Normal Cards */}
+              <div className="flex items-center gap-2 bg-gray-50 p-1.5 rounded-2xl border border-gray-150 w-full lg:w-auto justify-center">
+                <button
+                  onClick={() => handleSetFilter(false)}
+                  className={`px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-xl transition-all ${!isBoardMemberFilter ? 'bg-white text-gray-800 shadow-md border border-gray-100' : 'text-gray-400 hover:text-gray-600'}`}
+                >
+                  Normal Cards
+                </button>
+                <button
+                  onClick={() => handleSetFilter(true)}
+                  className={`px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-xl transition-all ${isBoardMemberFilter ? 'bg-white text-brand shadow-md border border-gray-100' : 'text-gray-400 hover:text-gray-600'}`}
+                >
+                  Board Members
+                </button>
               </div>
             </div>
             

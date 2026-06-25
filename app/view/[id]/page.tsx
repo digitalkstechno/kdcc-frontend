@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { Mail, Phone, MapPin, Menu, Share2, MessageCircle, Clock, Globe, Heart, CreditCard } from 'lucide-react';
+import { Mail, Phone, MapPin, Menu, Share2, MessageCircle, Clock, Globe, Heart, CreditCard, Calendar } from 'lucide-react';
 
 type ViewPageProps = {
   params: Promise<{ id: string }>;
@@ -101,9 +101,15 @@ export default function ViewPage({ params }: ViewPageProps) {
             </div>
           </div>
 
-          {/* Name & Designation */}
           <div className="mb-4">
-            <h1 className="text-2xl font-bold mb-0.5" style={{ color: '#F27733' }}>{builderData?.name || 'Name'}</h1>
+            <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+              <h1 className="text-2xl font-bold" style={{ color: '#F27733' }}>{builderData?.name || 'Name'}</h1>
+              {builderData?.isBoardMember && (
+                <span className="bg-orange-100 text-orange-700 text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-md border border-orange-200">
+                  Board Member
+                </span>
+              )}
+            </div>
             {builderData?.designation && <p className="text-gray-900 text-sm font-medium">{builderData.designation}</p>}
           </div>
 
@@ -165,6 +171,15 @@ export default function ViewPage({ params }: ViewPageProps) {
                 <div className="flex-1">
                   <p className="text-xs font-bold uppercase text-gray-400 mb-0.5">Blood Group</p>
                   <span className="text-gray-800 font-medium text-lg">{builderData.bloodGroup}</span>
+                </div>
+              </div>
+            )}
+            {builderData?.dob && (
+              <div className="border-2 rounded-xl p-4 flex items-center gap-4" style={{ borderColor: '#F27733' }}>
+                <Calendar size={24} style={{ color: '#F27733' }} />
+                <div className="flex-1">
+                  <p className="text-xs font-bold uppercase text-gray-400 mb-0.5">Date of Birth</p>
+                  <span className="text-gray-800 font-medium text-lg">{builderData.dob}</span>
                 </div>
               </div>
             )}

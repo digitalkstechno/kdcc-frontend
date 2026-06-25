@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
-import { Camera, Phone, MapPin, Clock, Globe, User, Loader2, Heart, CreditCard, Mail, Lock, UserPlus, Eye, EyeOff } from "lucide-react";
+import { Camera, Phone, MapPin, Clock, Globe, User, Loader2, Heart, CreditCard, Mail, Lock, UserPlus, Eye, EyeOff, Calendar } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/lib/redux/store";
 import { adminCreateUserAction } from "@/lib/redux/slices/authSlice";
@@ -34,6 +34,8 @@ export default function AddCardPage() {
     youtubeLink: "",
     linkedinLink: "",
     twitterLink: "",
+    isBoardMember: false,
+    dob: "",
   });
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -63,7 +65,7 @@ export default function AddCardPage() {
     const formData = new FormData();
 
     Object.entries(localProfile).forEach(([key, val]) => {
-      formData.append(key, val);
+      formData.append(key, String(val));
     });
     formData.append("role", "user");
     if (selectedFile) formData.append("profileImage", selectedFile);
@@ -87,6 +89,7 @@ export default function AddCardPage() {
     { key: "name", label: "Full Name", icon: User, placeholder: "Enter full name" },
     { key: "edpNumber", label: "EDP Number", icon: CreditCard, placeholder: "Enter EDP number" },
     { key: "designation", label: "Designation", icon: User, placeholder: "e.g. Senior Officer, Manager" },
+    { key: "dob", label: "Date of Birth", icon: Calendar, placeholder: "Select date of birth", type: "date" },
     { key: "number", label: "Phone Number", icon: Phone, placeholder: "Enter phone number", numeric: true },
     { key: "whatsappNumber", label: "WhatsApp Number", icon: Phone, placeholder: "Enter WhatsApp number", numeric: true },
     { key: "location", label: "Address", icon: MapPin, placeholder: "Enter address" },
@@ -181,7 +184,7 @@ export default function AddCardPage() {
             <div className="md:col-span-2 mt-4">
               <h3 className="text-xs font-black text-brand uppercase tracking-[0.2em] border-b border-brand/10 pb-2 mb-2">Profile Details</h3>
             </div>
-            {profileFields.map(({ key, label, icon: Icon, placeholder, maxLen, numeric }: any) => (
+            {profileFields.map(({ key, label, icon: Icon, placeholder, maxLen, numeric, type }: any) => (
               <div key={key} className="space-y-1.5 group">
                 <div className="flex items-center gap-2 mb-1">
                   <div className="h-7 w-7 bg-gray-50 rounded-lg flex items-center justify-center transition-colors group-focus-within:bg-brand/10">
@@ -190,6 +193,7 @@ export default function AddCardPage() {
                   <label className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">{label}</label>
                 </div>
                 <input
+                  type={type || "text"}
                   value={(localProfile as any)[key]}
                   onChange={(e) => {
                     let val = e.target.value;
@@ -204,6 +208,23 @@ export default function AddCardPage() {
                 />
               </div>
             ))}
+
+            {/* Checkbox for Board Member */}
+            <div className="flex items-center gap-3 md:col-span-2 bg-gray-50 border border-gray-100 p-5 rounded-2xl mt-4">
+              <input
+                type="checkbox"
+                id="isBoardMember"
+                checked={localProfile.isBoardMember}
+                onChange={(e) => setLocalProfile(prev => ({ ...prev, isBoardMember: e.target.checked }))}
+                className="h-5 w-5 rounded border-gray-300 text-brand focus:ring-brand cursor-pointer"
+              />
+              <div className="flex-1">
+                <label htmlFor="isBoardMember" className="text-sm font-bold text-gray-900 cursor-pointer block select-none">
+                  Board Member (Committee / Executive)
+                </label>
+                <p className="text-xs text-gray-400 mt-0.5">Toggle this on if the card belongs to a member of the Board of Directors or key executives (e.g., Chairman, Vice Chairman, Director).</p>
+              </div>
+            </div>
           </div>
 
           <button

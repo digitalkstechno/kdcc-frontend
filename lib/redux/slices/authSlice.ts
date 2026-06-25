@@ -28,9 +28,9 @@ const initialState: AuthState = {
 
 export const fetchUsers = createAsyncThunk(
   'auth/fetchUsers',
-  async ({ page = 1, limit = 10, search = "", edpSearch = "" }: { page?: number; limit?: number; search?: string; edpSearch?: string }, { rejectWithValue }) => {
+  async ({ page = 1, limit = 10, search = "", edpSearch = "", isBoardMember = "" }: { page?: number; limit?: number; search?: string; edpSearch?: string; isBoardMember?: any }, { rejectWithValue }) => {
     try {
-      const response = await api.get(`/builder/all?page=${page}&limit=${limit}&search=${search}&edpSearch=${edpSearch}`);
+      const response = await api.get(`/builder/all?page=${page}&limit=${limit}&search=${search}&edpSearch=${edpSearch}&isBoardMember=${isBoardMember}`);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch builders');
