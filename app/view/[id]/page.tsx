@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { Mail, Phone, MapPin, Menu, Share2, MessageCircle, Clock, Globe, Heart, CreditCard, Calendar } from 'lucide-react';
+import { Mail, Phone, MapPin, Menu, Share2, MessageCircle, Clock, Globe, Heart, CreditCard } from 'lucide-react';
 
 type ViewPageProps = {
   params: Promise<{ id: string }>;
@@ -171,15 +171,6 @@ export default function ViewPage({ params }: ViewPageProps) {
                 <div className="flex-1">
                   <p className="text-xs font-bold uppercase text-gray-400 mb-0.5">Blood Group</p>
                   <span className="text-gray-800 font-medium text-lg">{builderData.bloodGroup}</span>
-                </div>
-              </div>
-            )}
-            {builderData?.dob && (
-              <div className="border-2 rounded-xl p-4 flex items-center gap-4" style={{ borderColor: '#F27733' }}>
-                <Calendar size={24} style={{ color: '#F27733' }} />
-                <div className="flex-1">
-                  <p className="text-xs font-bold uppercase text-gray-400 mb-0.5">Date of Birth</p>
-                  <span className="text-gray-800 font-medium text-lg">{builderData.dob}</span>
                 </div>
               </div>
             )}
